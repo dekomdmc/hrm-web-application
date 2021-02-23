@@ -532,6 +532,19 @@ $company_small_logo=Utility::getValByName('company_small_logo');
 
                     @if(\Auth::user()->type=='company' || \Auth::user()->type=='super admin')
                     <li class="nav-item ">
+                        <a class="nav-link nav-toggle {{ (Request::segment(1) == 'role')?'active':''}}" href="/role">
+                            <i class="ni ni-settings-gear-65 text-danger"></i>
+                            <span class="nav-link-text">{{ __('Roles') }}</span>
+                        </a>
+                        <a class="nav-link nav-toggle {{ (Request::segment(1) == '')?'active':''}}" href="/permission">
+                            <i class="ni ni-settings-gear-65 text-danger"></i>
+                            <span class="nav-link-text">{{ __('Permissions') }}</span>
+                        </a>
+                    </li>
+                    @endif
+
+                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='super admin')
+                    <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'settings')?'active':''}}" href="{{route('settings')}}">
                             <i class="ni ni-settings-gear-65 text-danger"></i>
                             <span class="nav-link-text">{{ __('Settings') }}</span>

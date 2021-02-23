@@ -326,10 +326,6 @@
                                     <i class="fa fa-plus"></i>{{__('Add Item')}}
                                 </a>
                             </div>
-                            <div>
-                                <input type="checkbox" name="custom_name" id="custom_name">
-                                <label for="custom_name">Custom name</label>
-                            </div>
                         </div>
                     </div>
                 </div>

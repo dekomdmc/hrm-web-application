@@ -86,6 +86,37 @@ Route::group(
         ],
     ],
     function () {
+        Route::get('role', 'Role@index')->name('role');
+        Route::get('role/{id}/edit', 'Role@edit')->name('role.edit');
+        Route::get('role/delete/{id}', 'Role@delete')->name('role.delete');
+        Route::resource('role', 'Role');
+    }
+);
+
+Route::group(
+    [
+        'middleware' => [
+            'auth',
+            'XSS',
+        ],
+    ],
+    function () {
+        Route::get('permission', 'Permission@index')->name('permission');
+        Route::get('permission/{id}/edit', 'Permission@edit')->name('permission.edit');
+        Route::get('permission/delete/{id}', 'Permission@delete')->name('permission.delete');
+        Route::resource('permission', 'Permission');
+    }
+);
+
+
+Route::group(
+    [
+        'middleware' => [
+            'auth',
+            'XSS',
+        ],
+    ],
+    function () {
         Route::resource('department', 'DepartmentController');
     }
 );
