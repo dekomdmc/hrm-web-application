@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "mitaapps.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "Dekom HRM",
+            "username": "mitaapps_hrm",
+            "password": "Theokla@34@",
+            "database": "mitaapps_hrm"
+        }
+    ]
+}
