@@ -87,8 +87,10 @@ Route::group(
     ],
     function () {
         Route::get('role', 'Role@index')->name('role');
+        Route::post('role', 'Role@store');
+        Route::get('role/permission/{id}', 'Role@permission')->name('role.permission');
         Route::get('role/{id}/edit', 'Role@edit')->name('role.edit');
-        Route::get('role/delete/{id}', 'Role@delete')->name('role.delete');
+        Route::get('role/delete/{id}', 'Role@destroy')->name('role.destroy');
         Route::resource('role', 'Role');
     }
 );
@@ -101,7 +103,10 @@ Route::group(
         ],
     ],
     function () {
-        Route::get('permission', 'Permission@index')->name('permission');
+        Route::pattern('id', '[0-9]+');
+        Route::get('permission/{id}', 'Permission@index')->name('permission');
+        Route::post('permission', 'Permission@store')->name('permission.store');
+        Route::post('permission/{id}', 'Permission@createPermission')->name('permission.add');
         Route::get('permission/{id}/edit', 'Permission@edit')->name('permission.edit');
         Route::get('permission/delete/{id}', 'Permission@delete')->name('permission.delete');
         Route::resource('permission', 'Permission');

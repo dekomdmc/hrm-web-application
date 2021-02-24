@@ -91,8 +91,13 @@ $profile=asset(Storage::url('uploads/avatar'));
                                     <a href="{{route('employee.show',\Crypt::encrypt($employee->id))}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('View')}}">
                                         <i class="fas fa-eye"></i>
                                     </a>
+
                                     <a href="{{route('employee.edit',\Crypt::encrypt($employee->id))}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}">
                                         <i class="far fa-edit"></i>
+                                    </a>
+
+                                    <a href="{{route('permission',$employee->id)}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Permissions')}}">
+                                        <i class="ni ni-settings-gear-65"></i>
                                     </a>
 
                                     <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="{{__('Delete')}}" data-confirm="Are You Sure?|This action can not be undone. Do you want to continue?" data-confirm-yes="document.getElementById('delete-form-{{$employee->id}}').submit();">
