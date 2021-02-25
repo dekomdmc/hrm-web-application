@@ -17,7 +17,7 @@ class PurchaseInvoice extends Controller
 {
     public function index(Request $request)
     {
-        if (Auth::user()->type == 'company' || Auth::user()->type == 'client') {
+        if (Auth::user()->type == 'company' || Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view stock')) {
             if (Auth::user()->type == 'company') {
                 $invoices = \App\PurchaseInvoice::where('created_by', Auth::user()->creatorId());
             } else {

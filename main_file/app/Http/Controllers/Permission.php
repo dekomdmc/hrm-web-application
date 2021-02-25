@@ -21,11 +21,21 @@ class Permission extends Controller
         if(Auth::user()->type == "company"){
             $permissions = request('permissions');
             $user = \App\User::find($id);
-            foreach ($permissions as $permission) {
-                $perm = \App\Permission::find($permission);
-                $user->givePermissionTo($perm->name);
+            $all_permissions = \App\Permission::query()->get();
+            foreach ($all_permissions as $perm) {
+                if($user->hasPermissionTo($perm->name)) {
+                    $user->revokePermissionTo($perm->name);
+                }
             }
-            return redirect()->back()->with('success', 'Successfully created');
+            if(!empty($permissions)){
+                foreach ($permissions as $permission) {
+                    $perm = \App\Permission::find($permission);
+                    $user->givePermissionTo($perm->name);
+                }
+                return redirect()->back()->with('success', 'Successfully created');
+            }else{
+                return redirect()->back()->with('warning', 'No permissions were granted');
+            }
         }
 
     }

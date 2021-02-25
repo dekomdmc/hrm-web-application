@@ -47,6 +47,13 @@ class ItemController extends Controller
         return view('item.create', compact('category', 'unit', 'tax'));
     }
 
+    public function prices(){
+
+        $items = \App\StockItem::where('created_by', '=', \Auth::user()->creatorId())->get();
+
+        return view('item.prices', compact('items'));
+    }
+
     public function importExcel()
     {
         if (request()->file('excelfile')->isValid()) {

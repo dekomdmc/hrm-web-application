@@ -1079,6 +1079,7 @@ Route::group(
         Route::post('item/import', 'ItemController@importExcel');
         Route::post('item/bulkdelete', 'ItemController@bulkdelete');
         Route::get('item/export', 'ItemController@exportExcel');
+        Route::get('item/prices', 'ItemController@prices')->name('item.prices');
         Route::resource('item', 'ItemController');
     }
 );
