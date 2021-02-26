@@ -11,7 +11,7 @@ class ChartOfAccount extends Controller
 {
     function index()
     {
-        if (\Auth::user()->type == "company") {
+        if (\Auth::user()->type == "company" || \Auth::user()->type == 'employee') {
             $chartofaccounts = \App\ChartOfAccount::query()->get()->toArray();
             return view("chartofaccount.index", compact("chartofaccounts"));
         }

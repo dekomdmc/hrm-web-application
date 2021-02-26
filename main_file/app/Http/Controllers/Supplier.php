@@ -8,10 +8,8 @@ class Supplier extends Controller
 {
     public function index()
     {
-        if (\Auth::user()->type == "company") {
             $suppliers = \App\Supplier::query()->get()->toArray();
             return view('supplier.index', compact('suppliers'));
-        }
     }
 
     public function create()

@@ -7,7 +7,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
     <div class="scrollbar-inner">
         <!-- Brand -->
         <div class="sidenav-header d-flex align-items-center">
-            <a class="navbar-brand" href="{{route('dashboard')}}">
+            <a class="navbar-brand">
                 <img class="img-fluid" src="{{$logo.'/'.(isset($company_logo) && !empty($company_logo)?$company_logo:'logo.png')}}" alt="">
             </a>
             <div class="ml-auto">
@@ -24,13 +24,15 @@ $company_small_logo=Utility::getValByName('company_small_logo');
             <!-- Collapse -->
             <div class="collapse navbar-collapse" id="sidenav-collapse-main">
                 <ul class="navbar-nav">
-
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view dashboard'))
                     <li class="nav-item">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'dashboard' || Request::segment(1) == '')?'active':''}}" href="{{route('dashboard')}}">
                             <i class="ni ni-shop text-primary"></i>
                             <span class="nav-link-text">{{ __('Dashboard') }}</span>
                         </a>
                     </li>
+                    @endif
+
                     @if(\Auth::user()->type == 'super admin')
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'users')?'active':''}}" href="{{route('users.index')}}">
@@ -39,16 +41,17 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company')
-
-                    @elseif(\Auth::user()->type=='employee')
+                    
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view profile'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'employee')?'active':''}}" href="{{route('employee.show',\Crypt::encrypt(\Auth::user()->id))}}">
                             <i class="ni ni-single-02 text-pink"></i>
                             <span class="nav-link-text">{{ __('My Profile') }}</span>
                         </a>
                     </li>
-                    @elseif(\Auth::user()->type=='client')
+                    @endif
+                    
+                    @if(\Auth::user()->type=='client')
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'client')?'active':''}}" href="{{route('client.show',\Crypt::encrypt(\Auth::user()->id))}}">
                             <i class="ni ni-single-02 text-pink"></i>
@@ -57,7 +60,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                     </li>
                     @endif
 
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view hr'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'attendance' || Request::segment(1) == 'holiday' || Request::segment(1) == 'leave' || Request::segment(1) == 'meeting' || Request::segment(1) == 'account-assets' || Request::segment(1) == 'document-upload'  || Request::segment(1) == 'company-policy' || Request::segment(1) == 'award' || Request::segment(1) == 'transfer' || Request::segment(1) == 'resignation' || Request::segment(1) == 'trip' || Request::segment(1) ==
                         'promotion'  || Request::segment(1) == 'complaint' || Request::segment(1) == 'warning' || Request::segment(1) == 'termination' || Request::segment(1) == 'indicator' || Request::segment(1) == 'appraisal' || Request::segment(1) == 'trainer' || Request::segment(1) == 'training' || Request::segment(1) == 'bulk-attendance')
@@ -172,7 +175,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                     </li>
                     @endif
 
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee' || \Auth::user()->type=='client')
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view presale'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'lead' || Request::segment(1) == 'deal' || Request::segment(1) == 'estimate')?'active':''}}" href="#presale" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'lead' || Request::segment(1) == 'deal' || Request::segment(1) == 'estimate')?'true':'false'}}" aria-controls="navbar-dashboards1">
                             <i class="ni ni-cart text-primary"></i>
@@ -200,7 +203,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                     </li>
                     @endif
 
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->type=='employee')
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view project'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'project')?'active':''}}" href="#navbar-dashboards1" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'project' )?'true':'false'}}" aria-controls="navbar-dashboards1">
                             <i class="ni ni-collection text-pink"></i>
@@ -226,7 +229,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </div>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view items'))
                     <li class="collapse {{ (Request::segment(1) == 'invoice')?'show':''}}">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'item')?'active':''}}" href="{{route('item.index')}}">
                             <i class="ni ni-badge text-info"></i>
@@ -234,7 +238,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+ 
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'stock')?'active':''}}" href="#stock" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'stock' )?'true':'false'}}" aria-controls="navbar-dashboards1">
                             <i class="ni ni-building text-pink"></i>
@@ -257,6 +262,9 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                                 <li class="nav-item {{ (Request::segment(1) == 'item')?'active':''}}">
                                     <a class="nav-link" href="{{route('item.index')}}">{{ __('Stock Price List') }}</a>
                                 </li>
+                                <li class="nav-item {{ (Request::segment(1) == 'item')?'active':''}}">
+                                    <a class="nav-link" href="{{route('item.prices')}}">{{ __('Prices') }}</a>
+                                </li>
                                 @if(\Auth::user()->type=='company')
                                 <li class="nav-item {{ (Request::segment(1) == 'expense')?'active open':''}}">
                                     <a href="{{route('expense.index')}}" class="nav-link">{{__('Expense')}}</a>
@@ -266,7 +274,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </div>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'invoice' || Request::segment(1) == 'payment' || Request::segment(1) == 'creditNote' || Request::segment(1) == 'expense')?'active':''}}" href="#income" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'invoice' || Request::segment(1) == 'payment' || Request::segment(1) == 'creditNote' || Request::segment(1) == 'expense')?'true':'false'}}" aria-controls="income">
                             <i class="ni ni-credit-card text-primary"></i>
@@ -295,7 +304,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </div>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view contract'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'contract')?'active':''}}" href="{{route('contract.index')}}">
                             <i class="ni ni-single-copy-04 text-pink"></i>
@@ -303,7 +313,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view messenger'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'messages')?'active':''}}" href="{{ url('messages') }}">
                             <i class="ni ni-chat-round text-info"></i>
@@ -311,7 +322,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view support'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'support')?'active':''}}" href="{{route('support.index')}}">
                             <i class="ni ni-box-2 text-primary"></i>
@@ -319,7 +331,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view event'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'event')?'active':''}}" href="{{route('event.index')}}">
                             <i class="ni ni-calendar-grid-58 text-pink"></i>
@@ -327,7 +340,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view notice board'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'noticeBoard')?'active':''}}" href="{{route('noticeBoard.index')}}">
                             <i class="ni ni-tv-2 text-info"></i>
@@ -335,7 +349,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+                    
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view goal'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'goal')?'active':''}}" href="{{route('goal.index')}}">
                             <i class="ni ni-calendar-grid-58 text-primary"></i>
@@ -343,7 +358,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view notes'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'note')?'active':''}}" href="{{route('note.index')}}">
                             <i class="ni ni-book-bookmark text-pink"></i>
@@ -351,7 +367,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='super admin' || \Auth::user()->type=='company')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view plans'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'plan')?'active':''}}" href="{{route('plan.index')}}">
                             <i class="ni ni-trophy text-info"></i>
@@ -359,7 +376,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='super admin')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view coupon'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'coupon')?'active':''}}" href="{{route('coupon.index')}}">
                             <i class="ni ni-briefcase-24 text-primary"></i>
@@ -367,7 +385,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='super admin' || \Auth::user()->type=='company')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view order'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'order')?'active':''}}" href="{{route('order.index')}}">
                             <i class="ni ni-cart"></i>
@@ -375,7 +394,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='super admin' || \Auth::user()->type=='company')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view email templates'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'email_template' || Request::segment(1) == 'email_template_lang')?'active':''}}" href="{{route('email_template.index')}}">
                             <i class="ni ni-box-2 text-pink"></i>
@@ -383,7 +403,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view report'))
                     <li class="nav-item">
                         <a class="nav-link  {{ (Request::segment(1) == 'task-report' || Request::segment(1) == 'timelog-report'  || Request::segment(1) == 'finance-report'  || Request::segment(1) == 'income-report'  || Request::segment(1) == 'income-expense-report' || Request::segment(1) == 'leave-report'  ||
  Request::segment(1) == 'estimate-report' || Request::segment(1) == 'invoice-report' || Request::segment(1) == 'lead-report' || Request::segment(1) == 'client-report' || Request::segment(1) == 'attendance-report')?'active':''}}" href="#report" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'task-report' || Request::segment(1) == 'timelog-report' || Request::segment(1) == 'finance-report'  || Request::segment(1) == 'income-report'  || Request::segment(1) == 'income-expense-report' || Request::segment(1) == 'leave-report'  || Request::segment(1) == 'estimate-report' || Request::segment(1) == 'invoice-report' || Request::segment(1) ==
@@ -434,7 +455,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                     </li>
                     @endif
 
-                    @if(\Auth::user()->type=='company')
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view constant'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'department' || Request::segment(1) == 'designation' || Request::segment(1) == 'salaryType'  || Request::segment(1) == 'leaveType' || Request::segment(1) == 'pipeline' || Request::segment(1) == 'leadStage' || Request::segment(1) == 'projectStage' || Request::segment(1) == 'dealStage' || Request::segment(1) == 'source' || Request::segment(1) == 'label'  || Request::segment(1) == 'taxRate' || Request::segment(1) == 'unit' ||
                     Request::segment(1) == 'category' || Request::segment(1) == 'paymentMethod' || Request::segment(1) == 'contractType'  || Request::segment(1) == 'termination-type'  || Request::segment(1) == 'award-type'  || Request::segment(1) == 'training-type')
@@ -530,21 +551,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                     </li>
                     @endif
 
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='super admin')
-                    <li class="nav-item ">
-                        <a class="nav-link nav-toggle {{ (Request::segment(1) == 'role')?'active':''}}" href="/role">
-                            <i class="ni ni-settings-gear-65 text-danger"></i>
-                            <span class="nav-link-text">{{ __('Roles') }}</span>
-                        </a>
-                        <a class="nav-link nav-toggle {{ (Request::segment(1) == '')?'active':''}}" href="/permission">
-                            <i class="ni ni-settings-gear-65 text-danger"></i>
-                            <span class="nav-link-text">{{ __('Permissions') }}</span>
-                        </a>
-                    </li>
-                    @endif
-
-                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='super admin')
-                    <li class="nav-item ">
+                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view settings'))
+                    <li class="nav-item">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'settings')?'active':''}}" href="{{route('settings')}}">
                             <i class="ni ni-settings-gear-65 text-danger"></i>
                             <span class="nav-link-text">{{ __('Settings') }}</span>

@@ -19,7 +19,8 @@ class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
-        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view sales')) {
+
             if (\Auth::user()->type == 'company') {
                 $invoices = Invoice::where('created_by', \Auth::user()->creatorId());
             } else {

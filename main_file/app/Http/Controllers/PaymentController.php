@@ -12,7 +12,7 @@ class PaymentController extends Controller
 
     public function index()
     {
-        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'client')
+        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->type == 'employee')
         {
             if(\Auth::user()->type == 'company')
             {
@@ -22,7 +22,6 @@ class PaymentController extends Controller
             {
                 $payments = Payment::where('client', \Auth::user()->id)->get();
             }
-
 
             return view('payment.index', compact('payments'));
         }

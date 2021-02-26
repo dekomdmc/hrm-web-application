@@ -11,7 +11,7 @@ class PaymentMethodController extends Controller
 {
     public function index()
     {
-        if(\Auth::user()->type == 'company')
+        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'employee')
         {
             $paymentMethods = PaymentMethod::where('created_by', \Auth::user()->creatorId())->get();
 

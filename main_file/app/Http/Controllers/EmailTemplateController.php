@@ -15,7 +15,7 @@ class EmailTemplateController extends Controller
     {
         $usr = \Auth::user();
 
-        if($usr->type == 'super admin' || $usr->type == 'company')
+        if($usr->type == 'super admin' || $usr->type == 'company' || \Auth::user()->type == 'employee')
         {
             $EmailTemplates = EmailTemplate::all();
 

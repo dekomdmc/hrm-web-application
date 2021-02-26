@@ -10,7 +10,7 @@ class TaxRateController extends Controller
 {
     public function index()
     {
-        if(\Auth::user()->type == 'company')
+        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'employee')
         {
             $taxes = TaxRate::where('created_by', '=', \Auth::user()->creatorId())->get();
 

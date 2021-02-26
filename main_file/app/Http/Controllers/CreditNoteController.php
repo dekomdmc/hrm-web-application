@@ -12,7 +12,7 @@ class CreditNoteController extends Controller
 {
     public function index()
     {
-        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'client')
+        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->type == 'employee')
         {
             if(\Auth::user()->type == 'company')
             {

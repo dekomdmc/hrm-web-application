@@ -11,7 +11,7 @@ class CouponController extends Controller
 {
     public function index()
     {
-        if(\Auth::user()->type == 'super admin')
+        if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'employee' || \Auth::user()->type == 'company')
         {
             $coupons = Coupon::get();
 
