@@ -18,7 +18,7 @@ class ItemController extends Controller
     public function index()
     {
         if (\Auth::user()->type == 'company') {
-            $items = Item::where('created_by', '=', \Auth::user()->creatorId())->get();
+            $items = Item::where('created_by', '=', \Auth::user()->creatorId())->where('is_mode', 'stock')->get();
 
             return view('item.index', compact('items'));
         } else {
@@ -47,11 +47,96 @@ class ItemController extends Controller
         return view('item.create', compact('category', 'unit', 'tax'));
     }
 
-    public function prices(){
+    public function prices()
+    {
 
-        $items = \App\StockItem::where('created_by', '=', \Auth::user()->creatorId())->get();
-
+        $items = Item::where('created_by', '=', \Auth::user()->creatorId())->where('is_mode', '=', NULL)->get();
         return view('item.prices', compact('items'));
+    }
+
+    public function createStockItem()
+    {
+        $category = Category::where('created_by', '=', \Auth::user()->creatorId())->where('type', '=', 0)->get()->pluck('name', 'id');
+        $category->prepend('Select Category');
+        $unit = Unit::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        $unit->prepend('Select Unit', '');
+        $tax = TaxRate::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        return view('item.createStockItem', compact('category', 'unit', 'tax'));
+    }
+
+    public function pricesStore(Request $request)
+    {
+
+        if (\Auth::user()->type == 'company') {
+            $rules = [
+                'name' => 'required',
+                'sku' => 'required',
+                'sale_price' => 'required|numeric',
+                'purchase_price' => 'required|numeric',
+                'tax' => 'required',
+                'category' => 'required',
+                'unit' => 'required',
+                'type' => 'required',
+            ];
+
+            $validator = \Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
+
+                return redirect()->route('item.index')->with('error', $messages->first());
+            }
+
+            $item                 = new \App\StockItem();
+            $item->name           = $request->name;
+            $item->description    = $request->description;
+            $item->sku            = $request->sku;
+            $item->sale_price     = $request->sale_price;
+            $item->purchase_price = $request->purchase_price;
+            $item->tax            = implode(',', $request->tax);
+            $item->unit           = $request->unit;
+            $item->type           = $request->type;
+            $item->category       = $request->category;
+            $item->created_by     = \Auth::user()->creatorId();
+            $item->save();
+
+            return redirect()->route('item.prices')->with('success', __('Item successfully created.'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+
+    public function importStockItemExcel()
+    {
+        if (request()->file('excelfile')->isValid()) {
+            $items = (new \App\Imports\StockItemsImport)->toArray(request()->file('excelfile'));
+            if (count($items) > 0) {
+                foreach ($items as $items_) {
+                    if (count($items_) > 0) {
+                        \App\Item::where('is_mode', '=', NULL)->delete();
+                        foreach ($items_ as $item) {
+                            if ($item[0] != 'NAME') {
+                                $arr = [
+                                    'name' => $item[0],
+                                    'sku' => $item[1],
+                                    'sale_price' => $item[2] == "" ? 0.00 : $item[2],
+                                    'purchase_price' => $item[3] == "" ? 0.00 : $item[3],
+                                    'quantity' => $item[4],
+                                    'tax' => $item[5],
+                                    'category' => (new Item)->getCategoryIdByName($item[6]),
+                                    'unit' => (new Item)->getUnitIdByName($item[7]),
+                                    'type' => $item[8],
+                                    'description' => $item[9] == "" ? "No Description" : $item[9],
+                                    'created_by' => Auth::user()->id
+                                ];
+                                \App\Item::create($arr);
+                            }
+                        }
+                    }
+                    // Excel::import(new \App\Imports\ItemsImport, request()->file('excelfile'));
+                }
+            }
+        }
     }
 
     public function importExcel()
@@ -92,6 +177,11 @@ class ItemController extends Controller
         return (new ItemsExport)->download('Item.xlsx');
     }
 
+    public function createStockItemExport()
+    {
+        return (new \App\StockItemsExport)->download('StockItem.xlsx');
+    }
+
 
     public function store(Request $request)
     {
@@ -117,6 +207,9 @@ class ItemController extends Controller
             }
 
             $item                 = new Item();
+            if (isset($request->is_mode)) {
+                $item->is_mode = $request->is_mode;
+            }
             $item->name           = $request->name;
             $item->description    = $request->description;
             $item->sku            = $request->sku;
@@ -128,8 +221,11 @@ class ItemController extends Controller
             $item->category       = $request->category;
             $item->created_by     = \Auth::user()->creatorId();
             $item->save();
-
-            return redirect()->route('item.index')->with('success', __('Item successfully created.'));
+            if (isset($request->is_mode)) {
+                return redirect()->route('item.index')->with('success', __('Item successfully created.'));
+            } else {
+                return redirect()->route('item.prices')->with('success', __('Item successfully created.'));
+            }
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -190,8 +286,11 @@ class ItemController extends Controller
             $item->quantity           = $request->quantity;
             $item->category       = $request->category;
             $item->save();
-
-            return redirect()->route('item.index')->with('success', __('Item successfully updated.'));
+            if ($item->is_mode != NULL) {
+                return redirect()->route('item.index')->with('success', __('Item successfully updated.'));
+            } else {
+                return redirect()->route('item.prices')->with('success', __('Item successfully updated.'));
+            }
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -201,9 +300,22 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         if (\Auth::user()->type == 'company') {
-            $item->delete();
+            if ($item->is_mode != NULL) {
+                $item->delete();
+                return redirect()->route('item.index')->with('success', __('Item successfully deleted.'));
+            } else {
+                $item->delete();
+                return redirect()->route('item.prices')->with('success', __('Item successfully deleted.'));
+            }
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
 
-            return redirect()->route('item.index')->with('success', __('Item successfully deleted.'));
+    public function destroyItem(\App\StockItem $item)
+    {
+        if (\Auth::user()->type == 'company') {
+            return redirect()->route('item.prices')->with('success', __('Item successfully deleted.'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }

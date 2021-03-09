@@ -78,7 +78,11 @@ $profile=asset(Storage::url('uploads/avatar'));
 
                             <tr>
                                 <td class="select"></td>
-                                <td><a href="{{route('employee.show',\Crypt::encrypt($employee->id))}}" class="btn btn-sm btn-primary"> {{!empty($employee->employeeDetail)? \Auth::user()->employeeIdFormat($employee->employeeDetail->employee_id):''}}</a></td>
+                                <td>
+                                    <a href="{{route('employee.show',\Crypt::encrypt($employee->id))}}" class="btn btn-sm btn-primary">
+                                        {{!empty($employee->employeeDetail)? \Auth::user()->employeeIdFormat($employee->employeeDetail->employee_id):''}}
+                                    </a>
+                                </td>
                                 <td class="table-user">
                                     <img src="{{$profile.'/'.$employee->avatar}}" class="avatar rounded-circle mr-3 tbl-avatar">
                                     <b>{{$employee->name}}</b>

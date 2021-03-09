@@ -25,7 +25,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h2 class="h3 mb-0">{{__('Manage Items')}}</h2>
+                            <h2 class="h3 mb-0">{{__('Manage Items (Products)')}}</h2>
                         </div>
                         @if(\Auth::user()->type=='company')
                         <div class="col-auto">
@@ -62,6 +62,7 @@
                                 </th>
                                 <th> {{__('Sku')}}</th>
                                 <th>{{__('Name')}}</th>
+                                <th>{{__('Qty')}}</th>
                                 <th>{{__('Tax')}}</th>
                                 <th>{{__('Purchase Price')}}</th>
                                 <th>{{__('Sale Price')}}</th>
@@ -82,6 +83,7 @@
                                 <td></td>
                                 <td>{{ $item->sku }}</td>
                                 <td>{{ $item->name}}</td>
+                                <td>{{ $item->quantity}}</td>
                                 <td>
                                     @php
                                     $taxes=\Utility::tax($item->tax);

@@ -60,12 +60,10 @@ class EstimateController extends Controller
 
         $categories = Category::where('type', 1)->where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
         $categories->prepend('Select Category', '');
-        // $items = Item::where('created_by', \Auth::user()->creatorId())->get(['name', 'sale_price', 'id'])->toArray();
-        $items = Item::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        $items = Item::where('created_by', \Auth::user()->creatorId())->get()->toArray();
         // dd($items);
-        $items->prepend('Select Item', '-1');
+        // $items->prepend('Select Item', '-1');
         $estimateId = \Auth::user()->estimateNumberFormat($this->estimateNumber());
-
         return view('estimate.create', compact('clients', 'categories', 'estimateId', 'items'));
     }
 
@@ -408,8 +406,7 @@ class EstimateController extends Controller
     {
         $settings = Utility::settings();
 
-        $estimateId = Crypt::decrypt($id);
-        $estimate   = Estimate::where('id', $estimateId)->first();
+        $estimate   = Estimate::where('id', $id)->first();
 
         $data  = \DB::table('settings');
         $data  = $data->where('created_by', '=', $estimate->created_by);

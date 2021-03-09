@@ -1078,8 +1078,12 @@ Route::group(
     function () {
         Route::post('item/import', 'ItemController@importExcel');
         Route::post('item/bulkdelete', 'ItemController@bulkdelete');
+        Route::delete('item/delete', 'ItemController@destroyItem')->name('item.destroyItem');
         Route::get('item/export', 'ItemController@exportExcel');
         Route::get('item/prices', 'ItemController@prices')->name('item.prices');
+        Route::post('item/prices', 'ItemController@pricesStore')->name('item.pricesStore');
+        Route::get('item/prices/create', 'ItemController@createStockItem')->name('item.createStockItem');
+        Route::get('item/stockitems/export', 'ItemController@createStockItemExport')->name('item.createStockItemExport');
         Route::resource('item', 'ItemController');
     }
 );

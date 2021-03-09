@@ -16,8 +16,7 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'employee')
-        {
+        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'employee') {
             $status = Employee::$statues;
 
             $department = Department::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
@@ -27,48 +26,40 @@ class EmployeeController extends Controller
 
             $employees = User::select('users.*', 'employees.department', 'employees.designation')->leftJoin('employees', 'users.id', '=', 'employees.user_id')->where('type', 'employee')->where('users.created_by', '=', \Auth::user()->creatorId());
 
-            if(!empty($request->department))
-            {
+            if (!empty($request->department)) {
                 $employees->where('employees.department', $request->department);
             }
-            if(!empty($request->designation))
-            {
+            if (!empty($request->designation)) {
                 $employees->where('employees.designation', $request->designation);
             }
             $employees = $employees->get();
 
             return view('employee.index', compact('status', 'department', 'designation', 'employees'));
-
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
 
     public function create()
     {
         return view('employee.create');
-
     }
 
 
     public function store(Request $request)
     {
 
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
-                $request->all(), [
-                                   'name' => 'required|max:120',
-                                   'email' => 'required|email|unique:users',
-                                   'password' => 'required|min:6',
-                               ]
+                $request->all(),
+                [
+                    'name' => 'required|max:120',
+                    'email' => 'required|email|unique:users',
+                    'password' => 'required|min:6',
+                ]
             );
-            if($validator->fails())
-            {
+            if ($validator->fails()) {
                 $messages = $validator->getMessageBag();
 
                 return redirect()->back()->with('error', $messages->first());
@@ -84,8 +75,7 @@ class EmployeeController extends Controller
             $user->avatar     = 'avatar.png';
             $user->save();
 
-            if(!empty($user))
-            {
+            if (!empty($user)) {
                 $employee              = new Employee();
                 $employee->user_id     = $user->id;
                 $employee->employee_id = $this->employeeNumber();
@@ -98,37 +88,27 @@ class EmployeeController extends Controller
                 'password' => $request->password,
             ];
 
-            $resp = Utility::sendEmailTemplate('create_user', [$user->id => $user->email], $uArr);
+            // $resp = Utility::sendEmailTemplate('create_user', [$user->id => $user->email], $uArr);
 
 
-            return redirect()->route('employee.index')->with('success', __('Employee created Successfully!') . ((!empty($resp) && $resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
-
-        }
-        else
-        {
+            return redirect()->route('employee.index')->with('success', __('Employee created Successfully!'));
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
 
     public function show($id)
     {
-        if(\Auth::user()->type == 'company' || \Auth::user()->type == 'employee')
-        {
+        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'employee') {
             $eId  = \Crypt::decrypt($id);
             $user = User::find($eId);
-
-            $employee = Employee::where('user_id', $eId)->first();
-
+            // $employee = Employee::where('user_id', $eId)->first();
+            $employee = Employee::where('employee_id', $eId)->first();
             return view('employee.view', compact('user', 'employee'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
 
@@ -152,32 +132,30 @@ class EmployeeController extends Controller
 
     public function update(Request $request, $id)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
-                $request->all(), [
-                                   'dob' => 'required',
-                                   'gender' => 'required',
-                                   'address' => 'required',
-                                   'mobile' => 'required',
-                                   'department' => 'required',
-                                   'designation' => 'required',
-                                   'joining_date' => 'required',
-                                   'exit_date' => 'required',
-                                   'salary_type' => 'required',
-                                   'salary' => 'required',
-                               ]
+                $request->all(),
+                [
+                    'dob' => 'required',
+                    'gender' => 'required',
+                    'address' => 'required',
+                    'mobile' => 'required',
+                    'department' => 'required',
+                    'designation' => 'required',
+                    'joining_date' => 'required',
+                    'exit_date' => 'required',
+                    'salary_type' => 'required',
+                    'salary' => 'required',
+                ]
             );
 
-            if($validator->fails())
-            {
+            if ($validator->fails()) {
                 $messages = $validator->getMessageBag();
 
                 return redirect()->back()->with('error', $messages->first());
             }
 
-            if(!empty($request->name))
-            {
+            if (!empty($request->name)) {
                 $user       = User::find($id);
                 $user->name = $request->name;
                 $user->save();
@@ -198,21 +176,18 @@ class EmployeeController extends Controller
             $employee->save();
 
             return redirect()->route('employee.index')->with(
-                'success', 'Employee successfully updated.'
+                'success',
+                'Employee successfully updated.'
             );
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
 
     public function destroy($id)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $user = User::find($id);
             $user->delete();
 
@@ -220,19 +195,15 @@ class EmployeeController extends Controller
             $employee->delete();
 
             return redirect()->route('employee.index')->with('success', __('Employee successfully deleted.'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
     function employeeNumber()
     {
         $latest = Employee::where('created_by', '=', \Auth::user()->creatorId())->latest()->first();
-        if(!$latest)
-        {
+        if (!$latest) {
             return 1;
         }
 
@@ -246,4 +217,3 @@ class EmployeeController extends Controller
         return response()->json($designations);
     }
 }
-

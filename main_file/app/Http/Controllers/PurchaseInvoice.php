@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
 use App\Utility;
+use Illuminate\Support\Facades\Storage;
 
 class PurchaseInvoice extends Controller
 {
@@ -91,8 +92,86 @@ class PurchaseInvoice extends Controller
         }
     }
 
-    public function pdf()
+    public function pdf($id)
     {
+        $settings = Utility::settings();
+
+        $invoice   = \App\PurchaseInvoice::where('id', $id)->first();
+        $data  = \DB::table('settings');
+        $data  = $data->where('created_by', '=', $invoice->created_by);
+        $data1 = $data->get();
+
+        foreach ($data1 as $row) {
+            $settings[$row->name] = $row->value;
+        }
+
+        $client        = $invoice->clients;
+        $items         = [];
+        $totalTaxPrice = 0;
+        $totalQuantity = 0;
+        $totalRate     = 0;
+        $totalDiscount = 0;
+        $taxesData     = [];
+
+        foreach ($invoice->items as $product) {
+            $item           = new \stdClass();
+            $item->name     = $product->item;
+            $item->quantity = $product->quantity;
+            $item->tax      = $product->tax;
+            $item->discount = $product->discount;
+            $item->price    = $product->price;
+
+            $totalQuantity += $item->quantity;
+            $totalRate     += $item->price;
+            $totalDiscount += $item->discount;
+
+            $taxes = \Utility::tax($item->tax);
+
+            $itemTaxes = [];
+
+            foreach ($taxes as $tax) {
+                if (is_object($tax)) {
+                    $taxPrice      = \Utility::taxRate($tax->rate, $item->price, $item->quantity);
+                    $totalTaxPrice += $taxPrice;
+
+                    $itemTax['name']  = $tax->name;
+                    $itemTax['rate']  = $tax->rate . '%';
+                    $itemTax['price'] = \App\Utility::priceFormat($settings, $taxPrice);
+                    $itemTaxes[]      = $itemTax;
+
+
+                    if (array_key_exists($tax->name, $taxesData)) {
+                        $taxesData[$tax->name] = $taxesData[$tax->name] + $taxPrice;
+                    } else {
+                        $taxesData[$tax->name] = $taxPrice;
+                    }
+                }
+            }
+
+            $item->itemTax = $itemTaxes;
+            $items[]       = $item;
+        }
+
+        $invoice->items         = $items;
+        $invoice->totalTaxPrice = $totalTaxPrice;
+        $invoice->totalQuantity = $totalQuantity;
+        $invoice->totalRate     = $totalRate;
+        $invoice->totalDiscount = $totalDiscount;
+        $invoice->taxesData     = $taxesData;
+
+        //Set your logo
+        $logo         = asset(Storage::url('uploads/logo/'));
+        $company_logo = Utility::getValByName('company_logo');
+        $img          = asset($logo . '/' . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo.png'));
+
+        if ($invoice) {
+            $color      = '#' . $settings['invoice_color'];
+            $font_color = Utility::getFontColor($color);
+
+            return view('invoice.templates.' . $settings['invoice_template'], compact('invoice', 'color', 'settings', 'client', 'img', 'font_color'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
     }
 
     public function items(Request $request)
@@ -214,12 +293,12 @@ class PurchaseInvoice extends Controller
             'invoice_total' => \Auth::user()->priceFormat($invoice->getTotal()),
             'invoice_sub_total' => \Auth::user()->priceFormat($invoice->getSubTotal()),
             'invoice_due_amount' => \Auth::user()->priceFormat($invoice->getDue()),
-            'invoice_status' => Invoice::$statues[$invoice->status],
+            'invoice_status' => \App\Invoice::$statues[$invoice->status],
         ];
 
         if ($client != null) {
-            $resp = Utility::sendEmailTemplate('send_invoice', [$client->id => $client->email], $invoiceArr);
-            return redirect()->back()->with('success', __('Invoice successfully sent.') . (($resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
+            // $resp = Utility::sendEmailTemplate('send_invoice', [$client->id => $client->email], $invoiceArr);
+            return redirect()->back()->with('success', __('Invoice successfully sent.'));
         } else {
             return redirect()->back()->with('success', __("No Client has been seleted"));
         }
@@ -328,7 +407,7 @@ class PurchaseInvoice extends Controller
             // Send Email
             if (gettype($client) == "object") {
                 if ($client->email != "" || $client->email != null) {
-                    $resp = Utility::sendEmailTemplate('invoice_payment_recored', [$client->id => $client->email], $invoiceArr);
+                    // $resp = Utility::sendEmailTemplate('invoice_payment_recored', [$client->id => $client->email], $invoiceArr);
                 }
             }
 

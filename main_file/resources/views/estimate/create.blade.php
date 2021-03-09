@@ -351,8 +351,9 @@
                                         <input checked="checked" type="checkbox" class="custom-item-select">
                                     </span>
                                     <select data-url="{{route('estimate.product')}}" name="item" class="form-control custom-select item">
-                                        @foreach ($items as $key => $item) {
-                                        <option value="{{$key}}">{{$item}}</option>
+                                        <option value="0">Select Item</option>
+                                        @foreach ($items as $item) {
+                                        <option value="{{$item['id']}}">{{$item['name']}}</option>
                                         @endforeach
                                     </select>
                                     <!-- {{ Form::select('item', $items,null, array('class' => 'form-control custom-select item','data-url'=>route('estimate.product'))) }} -->

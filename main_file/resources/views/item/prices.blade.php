@@ -25,12 +25,12 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h2 class="h3 mb-0">{{__('Manage Items')}}</h2>
+                            <h2 class="h3 mb-0">{{__('Manage Items (Services)')}}</h2>
                         </div>
                         @if(\Auth::user()->type=='company')
                         <div class="col-auto">
                             <span class="create-btn">
-                                <a href="#" data-url="{{ route('item.create') }}" data-ajax-popup="true" data-title="{{__('Create New Item')}}" class="btn btn-outline-primary btn-sm">
+                                <a href="#" data-url="{{ route('item.createStockItem') }}" data-ajax-popup="true" data-title="{{__('Create New Item')}}" class="btn btn-outline-primary btn-sm">
                                     <i class="fa fa-plus"></i> {{__('Create')}}
                                 </a>
                             </span>
@@ -40,7 +40,7 @@
                                 </a>
                             </span>
                             <span>
-                                <a href="/item/export" class="btn btn-danger btn-sm">
+                                <a href="/item/stockitems/export" class="btn btn-danger btn-sm">
                                     <i class="fa fa-file-excel"></i> {{__('Export')}}
                                 </a>
                             </span>

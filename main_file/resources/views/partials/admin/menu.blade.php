@@ -41,8 +41,8 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    
-                    @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view profile'))
+
+                    @if(\Auth::user()->hasPermissionTo('view profile'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'employee')?'active':''}}" href="{{route('employee.show',\Crypt::encrypt(\Auth::user()->id))}}">
                             <i class="ni ni-single-02 text-pink"></i>
@@ -50,7 +50,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    
+
                     @if(\Auth::user()->type=='client')
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'client')?'active':''}}" href="{{route('client.show',\Crypt::encrypt(\Auth::user()->id))}}">
@@ -238,7 +238,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
- 
+
                     @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock'))
                     <li class="nav-item ">
                         <a class="nav-link {{ (Request::segment(1) == 'stock')?'active':''}}" href="#stock" data-toggle="collapse" role="button" aria-expanded="{{ (Request::segment(1) == 'stock' )?'true':'false'}}" aria-controls="navbar-dashboards1">
@@ -263,7 +263,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                                     <a class="nav-link" href="{{route('item.index')}}">{{ __('Stock Price List') }}</a>
                                 </li>
                                 <li class="nav-item {{ (Request::segment(1) == 'item')?'active':''}}">
-                                    <a class="nav-link" href="{{route('item.prices')}}">{{ __('Prices') }}</a>
+                                    <a class="nav-link" href="{{route('item.prices')}}">{{ __('Price List') }}</a>
                                 </li>
                                 @if(\Auth::user()->type=='company')
                                 <li class="nav-item {{ (Request::segment(1) == 'expense')?'active open':''}}">
@@ -349,7 +349,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                         </a>
                     </li>
                     @endif
-                    
+
                     @if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view goal'))
                     <li class="nav-item ">
                         <a class="nav-link nav-toggle {{ (Request::segment(1) == 'goal')?'active':''}}" href="{{route('goal.index')}}">

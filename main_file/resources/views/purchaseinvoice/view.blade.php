@@ -196,7 +196,7 @@
                         @endif
                         @endif
                         <div class="col-auto">
-                            <a href="{{route('purchaseinvoice.pdf',\Crypt::encrypt($invoice->id))}}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <a href="{{route('purchaseinvoice.pdf',$invoice->id)}}" target="_blank" class="btn btn-outline-primary btn-sm">
                                 <span class="btn-inner--icon"><i class="fa fa-print"></i></span>
                                 <span class="btn-inner--text">{{__('Print')}}</span>
                             </a>

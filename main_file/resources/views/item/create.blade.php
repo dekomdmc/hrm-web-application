@@ -1,6 +1,7 @@
 {{ Form::open(array('url' => 'item')) }}
 <div class="row">
     <div class="form-group col-md-6">
+        <input type="hidden" name="is_mode" value="stock">
         {{ Form::label('name', __('Item Name')) }}
         {{ Form::text('name', '', array('class' => 'form-control','required'=>'required')) }}
     </div>
@@ -34,23 +35,7 @@
     </div>
 
     <div class="form-group col-md-6">
-        <div class="form-group">
-            <label class="d-block">{{__('Type')}}</label>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="customRadio5" name="type" value="product" checked="checked">
-                        <label class="custom-control-label" for="customRadio5">{{__('Product')}}</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="customRadio6" name="type" value="service">
-                        <label class="custom-control-label" for="customRadio6">{{__('Service')}}</label>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <input type="hidden" class="custom-control-input" id="customRadio5" name="type" value="product">
     </div>
 </div>
 <div class="row">

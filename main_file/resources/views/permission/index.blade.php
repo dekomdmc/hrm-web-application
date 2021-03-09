@@ -23,6 +23,13 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
+            <ul class="nav nav-tabs p-3">
+                <li><a data-toggle="tab" href="#menu1">View Permissions</a></li>
+                <li class="active"><a data-toggle="tab" href="#home">Create Permissions</a></li>
+                <li><a data-toggle="tab" href="#menu2">Edit Permissions</a></li>
+            </ul>
+        </div>
+        <div class="col-lg-12">
             {{ Form::open(array('url'=> route('permission.add', $user->id),'method'=>'post')) }}
             <div class="card">
                 <div class="card-header">

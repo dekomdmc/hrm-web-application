@@ -8,8 +8,8 @@ class Supplier extends Controller
 {
     public function index()
     {
-            $suppliers = \App\Supplier::query()->get()->toArray();
-            return view('supplier.index', compact('suppliers'));
+        $suppliers = \App\Supplier::query()->get()->toArray();
+        return view('supplier.index', compact('suppliers'));
     }
 
     public function create()

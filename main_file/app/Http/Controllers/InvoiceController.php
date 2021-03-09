@@ -499,9 +499,7 @@ class InvoiceController extends Controller
         if (\Auth::user()->type == 'company') {
             $invoicePayment = InvoicePayment::find($payment_id);
             $invoicePayment->delete();
-
             $invoice = Invoice::find($id);
-
             if ($invoice->getDue() <= 0.0) {
                 Invoice::change_status($invoice->id, 5);
             } elseif ($invoice->getDue() > 0) {
@@ -509,7 +507,6 @@ class InvoiceController extends Controller
             } else {
                 Invoice::change_status($invoice->id, 3);
             }
-
             return redirect()->back()->with('success', __('Invoice payment successfully deleted.'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -534,8 +531,7 @@ class InvoiceController extends Controller
     {
         $settings = Utility::settings();
 
-        $invoiceId = Crypt::decrypt($id);
-        $invoice   = Invoice::where('id', $invoiceId)->first();
+        $invoice   = Invoice::where('id', $id)->first();
 
         $data  = \DB::table('settings');
         $data  = $data->where('created_by', '=', $invoice->created_by);
