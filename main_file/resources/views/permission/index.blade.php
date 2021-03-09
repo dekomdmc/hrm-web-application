@@ -24,52 +24,74 @@
     <div class="row">
         <div class="col-lg-12">
             <ul class="nav nav-tabs p-3">
-                <li><a data-toggle="tab" href="#menu1">View Permissions</a></li>
-                <li class="active"><a data-toggle="tab" href="#home">Create Permissions</a></li>
-                <li><a data-toggle="tab" href="#menu2">Edit Permissions</a></li>
+                <li class="active">
+                    <a data-toggle="tab" href="#view-permissions">View Permissions</a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#create-permissions">Create Permissions</a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#edit-permissions">Edit Permissions</a>
+                </li>
             </ul>
         </div>
         <div class="col-lg-12">
             {{ Form::open(array('url'=> route('permission.add', $user->id),'method'=>'post')) }}
-            <div class="card">
-                <div class="card-header">
-                    {{ $user->name }} Permissions
-                    <div class="float-right">
-                        <a href="#" data-url="{{ route('permission.create') }}" data-ajax-popup="true" data-title="{{__('Create New Permission')}}" class="btn btn-primary btn-sm">Add Permission</a>
-                        <input class="btn btn-sm btn-primary" type="submit" value="Save">
+
+            <div class="tab-content" id="nav-tabContent">
+                <div class="card">
+                    <div class="card-header">
+                        {{ $user->name }} Permissions
+                        <div class="float-right">
+                            <a href="#" data-url="{{ route('permission.create') }}"
+                                data-ajax-popup="true"
+                                data-title="{{ __('Create New Permission') }}"
+                                class="btn btn-primary btn-sm">Add Permission</a>
+                            <input class="btn btn-sm btn-primary" type="submit" value="Save">
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive py-4">
-                        <table class="table table-flush" id="datatable-basic">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Permission</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($permissions as $permission)
-                                    <tr>
-                                        <td></td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input <?= $user->hasPermissionTo($permission->name) ? 'checked' : '' ?> id="{{ $permission->id }}" name="permissions[]"
-                                                    value="{{ $permission->id }}" class="form-check-input"
-                                                    type="checkbox">
-                                                <label class="form-check-label"
-                                                    for="{{ $permission->id }}">{{ $permission->name }}</label>
-                                            </div>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="card-body">
+                        <div class="tab-pane fade show active" id="view-permissions" role="tabpanel"
+                            aria-labelledby="nav-home-tab">
+                            <div class="table-responsive py-4">
+                                <table class="table table-flush" id="datatable-basic">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Permission</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($permissions as $permission)
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input
+                                                            <?= $user->hasPermissionTo($permission->name) ? 'checked' : '' ?>
+                                                            id="{{ $permission->id }}" name="permissions[]"
+                                                            value="{{ $permission->id }}" class="form-check-input"
+                                                            type="checkbox">
+                                                        <label class="form-check-label"
+                                                            for="{{ $permission->id }}">{{ $permission->name }}</label>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="create-permissions" role="tabpanel"
+                            aria-labelledby="create-permissions-tab">...</div>
+                        <div class="tab-pane fade" id="edit-permissions" role="tabpanel"
+                            aria-labelledby="create-permissions-tab">...</div>
                     </div>
                 </div>
             </div>
+
             {{ Form::close() }}
         </div>
     </div>
