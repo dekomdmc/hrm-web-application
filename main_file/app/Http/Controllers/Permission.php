@@ -50,7 +50,7 @@ class Permission extends Controller
 
     public function store(Request $request){
         if(Auth::user()->type == "company"){
-            \Spatie\Permission\Models\Permission::create(['name' => $request->name]);
+            \Spatie\Permission\Models\Permission::create(['name' => $request->name, 'type'=> $request->type]);
             return redirect()->back()->with('success', 'Successfully created');
         }
     }

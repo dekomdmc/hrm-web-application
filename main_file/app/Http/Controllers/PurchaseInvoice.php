@@ -19,7 +19,7 @@ class PurchaseInvoice extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->type == 'company' || Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view stock')) {
-            if (Auth::user()->type == 'company') {
+            if (Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
                 $invoices = \App\PurchaseInvoice::where('created_by', Auth::user()->creatorId());
             } else {
                 $invoices = \App\PurchaseInvoice::where('client', Auth::user()->id);
@@ -56,7 +56,7 @@ class PurchaseInvoice extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->type == 'company') {
+        if (Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
             $validator = Validator::make(
                 $request->all(),
                 [
@@ -202,7 +202,7 @@ class PurchaseInvoice extends Controller
 
     public function itemDelete($id, $item_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
             $invoice        = \App\PurchaseInvoice::find($id);
             $invoiceProduct = \App\PurchaseInvoiceProduct::find($item_id);
             $invoiceProduct->delete();
@@ -220,7 +220,7 @@ class PurchaseInvoice extends Controller
     public function storeProduct(Request $request, $invoice_id)
     {
 
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
 
             $itemname = "";
             if ($request->custom_itemcheck == "on") {
@@ -324,7 +324,7 @@ class PurchaseInvoice extends Controller
     {
 
 
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
 
             $invoice = \App\PurchaseInvoice::find($invoice_id);
             if ($invoice->type == 'Product') {

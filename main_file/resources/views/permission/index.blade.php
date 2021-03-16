@@ -58,34 +58,69 @@
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>Permission</th>
+                                            <th>View Permission</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($permissions as $permission)
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input
-                                                            <?= $user->hasPermissionTo($permission->name) ? 'checked' : '' ?>
-                                                            id="{{ $permission->id }}" name="permissions[]"
-                                                            value="{{ $permission->id }}" class="form-check-input"
-                                                            type="checkbox">
-                                                        <label class="form-check-label"
-                                                            for="{{ $permission->id }}">{{ $permission->name }}</label>
-                                                    </div>
-                                                </td>
-                                                <td></td>
-                                            </tr>
+                                            @if($permission->type == 'view')
+                                                <tr>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input
+                                                                <?= $user->hasPermissionTo($permission->name) ? 'checked' : '' ?>
+                                                                id="{{ $permission->id }}" name="permissions[]"
+                                                                value="{{ $permission->id }}" class="form-check-input"
+                                                                type="checkbox">
+                                                            <label class="form-check-label"
+                                                                for="{{ $permission->id }}">{{ $permission->name }}</label>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="create-permissions" role="tabpanel"
-                            aria-labelledby="create-permissions-tab">...</div>
+                            aria-labelledby="create-permissions-tab">
+                            <div class="table-responsive py-4">
+                                <table class="table table-flush" id="datatable-basic">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Permissions</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($permissions as $permission)
+                                            @if($permission->type == 'create')
+                                                <tr>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input
+                                                                <?= $user->hasPermissionTo($permission->name) ? 'checked' : '' ?>
+                                                                id="{{ $permission->id }}" name="permissions[]"
+                                                                value="{{ $permission->id }}" class="form-check-input"
+                                                                type="checkbox">
+                                                            <label class="form-check-label"
+                                                                for="{{ $permission->id }}">{{ $permission->name }}</label>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div class="tab-pane fade" id="edit-permissions" role="tabpanel"
                             aria-labelledby="create-permissions-tab">...</div>
                     </div>

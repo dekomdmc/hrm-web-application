@@ -21,7 +21,7 @@ class InvoiceController extends Controller
     {
         if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view sales')) {
 
-            if (\Auth::user()->type == 'company') {
+            if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
                 $invoices = Invoice::where('created_by', \Auth::user()->creatorId());
             } else {
                 $invoices = Invoice::where('client', \Auth::user()->id);
@@ -61,7 +61,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
 
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -162,7 +162,7 @@ class InvoiceController extends Controller
 
     public function update(Request $request, Invoice $invoice)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -252,7 +252,7 @@ class InvoiceController extends Controller
             return redirect()->back()->with('error', __('Item name cannot be empty'));
         }
 
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -285,7 +285,7 @@ class InvoiceController extends Controller
 
     public function storeProject(Request $request, $invoice_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             if ($request->type == 'milestone') {
                 $validator = \Validator::make(
                     $request->all(),
@@ -341,7 +341,7 @@ class InvoiceController extends Controller
 
     public function itemDelete($id, $item_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $invoice        = Invoice::find($id);
             $invoiceProduct = InvoiceProduct::find($item_id);
             $invoiceProduct->delete();
@@ -408,7 +408,7 @@ class InvoiceController extends Controller
 
     public function storeReceipt(Request $request, $invoice_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
 
 
             $invoice = Invoice::find($invoice_id);
@@ -496,7 +496,7 @@ class InvoiceController extends Controller
     public function paymentDelete($id, $payment_id)
     {
 
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $invoicePayment = InvoicePayment::find($payment_id);
             $invoicePayment->delete();
             $invoice = Invoice::find($id);
@@ -515,7 +515,7 @@ class InvoiceController extends Controller
 
     public function statusChange(Request $request, $id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $status          = $request->status;
             $invoice         = Invoice::find($id);
             $invoice->status = $status;
