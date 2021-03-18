@@ -34,9 +34,11 @@ class ProjectController extends Controller
             $user = \Auth::user();
             if (\Auth::user()->type == 'client') {
                 $projects = Project::where('client', '=', $user->id)->get();
-            } elseif (\Auth::user()->type == 'employee') {
-                $projects = Project::select('projects.*')->leftjoin('project_users', 'project_users.project_id', 'projects.id')->where('project_users.user_id', '=', $user->id)->get();
-            } else {
+            }
+            // elseif (\Auth::user()->type == 'employee') {
+            //     $projects = Project::select('projects.*')->leftjoin('project_users', 'project_users.project_id', 'projects.id')->where('project_users.user_id', '=', $user->id)->get();
+            // }
+            else {
                 $projects = Project::where('created_by', '=', $user->creatorId())->get();
             }
             $projectStatus = Project::$projectStatus;
@@ -66,7 +68,6 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-
         if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
                 $request->all(),
@@ -248,7 +249,6 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         if (\Auth::user()->type == 'company') {
-
             $project->delete();
 
             return redirect()->route('project.index')->with('success', __('Project successfully deleted.'));
@@ -369,7 +369,6 @@ class ProjectController extends Controller
 
     public function taskStore(Request $request, $projec_id)
     {
-
         if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
                 $request->all(),
@@ -465,7 +464,6 @@ class ProjectController extends Controller
 
     public function taskUpdate(Request $request, $task_id)
     {
-
         if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
                 $request->all(),
@@ -532,7 +530,6 @@ class ProjectController extends Controller
 
     public function taskShow($task_id, $client_id = '')
     {
-
         $task    = ProjectTask::find($task_id);
         $project = Project::find($task->project_id);
 
@@ -603,7 +600,6 @@ class ProjectController extends Controller
 
     public function commentStore(Request $request, $project_id, $task_id)
     {
-
         $post               = [];
         $post['task_id']    = $task_id;
         $post['comment']    = $request->comment;
@@ -754,7 +750,6 @@ class ProjectController extends Controller
 
     public function milestoneDestroy($id)
     {
-
         $milestone = ProjectMilestone::find($id);
         $milestone->delete();
 
@@ -920,7 +915,6 @@ class ProjectController extends Controller
     public function fileUpdate(Request $request, $project_id, $file_id)
     {
         if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client') {
-
             $file = ProjectFile::find($file_id);
             if (!empty($request->file)) {
                 $fileName = time() . "_" . $request->file->getClientOriginalName();
@@ -942,7 +936,6 @@ class ProjectController extends Controller
 
     public function fileDestroy($id)
     {
-
         $file = ProjectFile::find($id);
         $file->delete();
 
@@ -952,7 +945,6 @@ class ProjectController extends Controller
 
     public function projectCommentStore(Request $request, $project_id)
     {
-
         $project = Project::find($project_id);
 
         $validator = \Validator::make(
@@ -997,7 +989,6 @@ class ProjectController extends Controller
 
     public function projectCommentReply($project_id, $comment_id)
     {
-
         return view('project.commentReply', compact('project_id', 'comment_id'));
     }
 
@@ -1052,7 +1043,6 @@ class ProjectController extends Controller
 
     public function projectClientFeedbackReply($project_id, $comment_id)
     {
-
         return view('project.clientFeedbackReply', compact('project_id', 'comment_id'));
     }
 
@@ -1076,7 +1066,6 @@ class ProjectController extends Controller
 
     public function projectTimesheetStore(Request $request, $project_id)
     {
-
         if (\Auth::user()->type == 'company') {
             $project = Project::find($project_id);
 
@@ -1199,7 +1188,6 @@ class ProjectController extends Controller
 
     public function projectTimesheetDestroy($id)
     {
-
         if (\Auth::user()->type == 'company') {
             $timesheet = Timesheet::find($id);
             $timesheet->delete();
@@ -1215,8 +1203,6 @@ class ProjectController extends Controller
 
     public function allTask(Request $request)
     {
-
-
         $priority  = Project::$priority;
         $stageList = ProjectStage::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
 
@@ -1280,8 +1266,6 @@ class ProjectController extends Controller
 
     public function allTimesheet(Request $request)
     {
-
-
         if (\Auth::user()->type == 'company') {
             $projectList = Project::where('created_by', \Auth::user()->creatorId());
         } elseif (\Auth::user()->type == 'employee') {

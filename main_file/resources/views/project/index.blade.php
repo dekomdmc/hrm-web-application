@@ -27,7 +27,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                         <div class="col-6">
                             <h3 class="mb-0">{{__('Manage Project')}}</h3>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create project'))
                         <div class="col-6 text-right">
                             <span class="create-btn">
                                 <a href="{{ route('project.create') }}" class="btn btn-outline-primary btn-sm">
@@ -70,7 +70,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
 
                                         <div class="tx-gray-500 small mt-1">{{count($project->tasks)}} {{__('opened tasks')}}, {{$project->completedTask()}} {{__('tasks completed')}}</div>
                                     </div>
-                                    @if(\Auth::user()->type=='company')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('view project'))
                                     <div class="project-actions custom-menu-dropdown">
                                         <a class="dropdown" data-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-ellipsis-v"></i>
