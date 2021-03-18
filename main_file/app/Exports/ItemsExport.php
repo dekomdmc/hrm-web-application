@@ -21,7 +21,7 @@ class ItemsExport implements WithHeadings, FromCollection
 
     public function collection()
     {
-        $items = Item::query()->get(['name', 'sku', 'sale_price', 'purchase_price', 'quantity', 'tax', 'category', 'unit', 'type', 'description']);
+        $items = Item::query()->where("type","product")->get(['name', 'sku', 'sale_price', 'purchase_price', 'quantity', 'tax', 'category', 'unit', 'type', 'description']);
         foreach ($items as $item) {
             $item->unit = (new Item)->getUnitNameById($item->unit);
             $item->category = (new Item)->getCategoryNameById($item->category);

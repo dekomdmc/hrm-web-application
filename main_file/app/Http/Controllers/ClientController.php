@@ -16,10 +16,9 @@ class ClientController extends Controller
 
     public function index()
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $status  = Client::$statues;
             $clients = User::where('type', 'client')->where('created_by', '=', \Auth::user()->creatorId())->get();
-
             return view('client.index', compact('status', 'clients'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));

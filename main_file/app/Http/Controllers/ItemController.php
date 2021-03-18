@@ -179,7 +179,7 @@ class ItemController extends Controller
 
     public function createStockItemExport()
     {
-        return (new \App\StockItemsExport)->download('StockItem.xlsx');
+        return (new \App\Exports\StockItemsExport)->download('StockItem.xlsx');
     }
 
 
