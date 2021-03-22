@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
-
     public function index()
     {
         if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
@@ -28,7 +27,7 @@ class ClientController extends Controller
 
     public function create()
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             return view('client.create');
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -38,60 +37,60 @@ class ClientController extends Controller
 
     public function store(Request $request)
     {
-        if (\Auth::user()->type == 'company') {
-            $validator = \Validator::make(
-                $request->all(),
-                [
+        // if (\Auth::user()->type == 'company') {
+        $validator = \Validator::make(
+            $request->all(),
+            [
                     'name' => 'required|max:120',
                     // 'email' => 'required|email|unique:users',
                     // 'password' => 'required|min:6',
                 ]
-            );
-            if ($validator->fails()) {
-                $messages = $validator->getMessageBag();
-                return redirect()->back()->with('error', $messages->first());
-            }
-            $user             = new User();
-            $user->name       = $request->name;
-
-            if (!empty($request->phone)) {
-                $user->phone = $request->phone;
-            }
-
-            if (!empty($request->email)) {
-                $user->email      = $request->email;
-            }
-
-            if (!empty($request->password)) {
-                $user->password   = Hash::make($request->password);
-            }
-
-            $user->type       = 'client';
-            $user->lang       = 'en';
-            $user->created_by = \Auth::user()->creatorId();
-            $user->avatar     = 'avatar.png';
-            $user->save();
-            if (!empty($user)) {
-                $client             = new Client();
-                $client->user_id    = $user->id;
-                $client->client_id  = $this->clientNumber();
-                $client->created_by = \Auth::user()->creatorId();
-                $client->save();
-            }
-
-            $uArr = [
-                'email' => $user->email,
-                'password' => $request->password,
-            ];
-
-            if (!empty($request->email)) {
-                $resp = Utility::sendEmailTemplate('create_user', [$user->id => $user->email], $uArr);
-            }
-
-            return redirect()->route('client.index')->with('success', __('Client successfully created.') . ((!empty($resp) && $resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+        );
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first());
         }
+        $user             = new User();
+        $user->name       = $request->name;
+
+        if (!empty($request->phone)) {
+            $user->phone = $request->phone;
+        }
+
+        if (!empty($request->email)) {
+            $user->email      = $request->email;
+        }
+
+        if (!empty($request->password)) {
+            $user->password   = Hash::make($request->password);
+        }
+
+        $user->type       = 'client';
+        $user->lang       = 'en';
+        $user->created_by = \Auth::user()->creatorId();
+        $user->avatar     = 'avatar.png';
+        $user->save();
+        if (!empty($user)) {
+            $client             = new Client();
+            $client->user_id    = $user->id;
+            $client->client_id  = $this->clientNumber();
+            $client->created_by = \Auth::user()->creatorId();
+            $client->save();
+        }
+
+        $uArr = [
+            'email' => $user->email,
+            'password' => $request->password,
+        ];
+
+        if (!empty($request->email)) {
+            $resp = Utility::sendEmailTemplate('create_user', [$user->id => $user->email], $uArr);
+        }
+
+        return redirect()->route('client.index')->with('success', __('Client successfully created.') . ((!empty($resp) && $resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
+        // } else {
+            // return redirect()->back()->with('error', __('Permission denied.'));
+        // }
     }
 
 
@@ -200,7 +199,7 @@ class ClientController extends Controller
         }
     }
 
-    function clientNumber()
+    public function clientNumber()
     {
         $latest = Client::where('created_by', '=', \Auth::user()->creatorId())->latest()->first();
         if (!$latest) {
@@ -210,7 +209,7 @@ class ClientController extends Controller
         return $latest->client_id + 1;
     }
 
-    function import_clients()
+    public function import_clients()
     {
         if (request()->file('excelfile')->getMimeType() == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
             $clients_sheets = (new ClientImport)->toArray(request()->file('excelfile'));
@@ -249,7 +248,7 @@ class ClientController extends Controller
         }
     }
 
-    function export_clients()
+    public function export_clients()
     {
         return (new ClientExport)->download('Clients.xlsx');
     }

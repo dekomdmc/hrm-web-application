@@ -265,7 +265,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                                 <li class="nav-item {{ (Request::segment(1) == 'item')?'active':''}}">
                                     <a class="nav-link" href="{{route('item.prices')}}">{{ __('Price List') }}</a>
                                 </li>
-                                @if(\Auth::user()->type=='company')
+                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('view expenses'))
                                 <li class="nav-item {{ (Request::segment(1) == 'expense')?'active open':''}}">
                                     <a href="{{route('expense.index')}}" class="nav-link">{{__('Expense')}}</a>
                                 </li>

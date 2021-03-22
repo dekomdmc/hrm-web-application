@@ -186,6 +186,16 @@ class PurchaseInvoice extends Controller
         return json_encode($items);
     }
 
+    public function edit(\App\PurchaseInvoice $invoice)
+    {
+        $clients = User::where('created_by', \Auth::user()->creatorId())->where('type', 'client')->get()->pluck('name', 'id');
+        $clients->prepend('Select Client', '');
+        $taxes        = TaxRate::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        $invoice->tax = explode(',', $invoice->tax);
+
+        return view('purchaseinvoice.edit', compact('clients', 'taxes', 'invoice'));
+    }
+
     public function createItem($invoice_id)
     {
         $items = \App\Item::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');

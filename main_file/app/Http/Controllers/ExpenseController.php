@@ -9,10 +9,9 @@ use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
-
     public function index()
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view expenses')) {
             $expenses = Expense::where('created_by', \Auth::user()->creatorId())->get();
             return view('expense.index', compact('expenses'));
         } else {
@@ -35,7 +34,7 @@ class ExpenseController extends Controller
      * Store
      *
      * @param Request $request request object
-     * 
+     *
      * @return void
      */
     public function store(Request $request)

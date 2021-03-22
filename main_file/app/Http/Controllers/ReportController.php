@@ -22,11 +22,9 @@ class ReportController extends Controller
 {
     public function task(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $projects = Project::where('created_by', \Auth::user()->creatorId());
-            if(!empty($request->project))
-            {
+            if (!empty($request->project)) {
                 $projects->where('id', $request->project);
             }
 
@@ -41,34 +39,29 @@ class ReportController extends Controller
             $filter['project']        = __('All');
             $filter['employee']       = __('All');
 
-            foreach($projectStages as $stage)
-            {
+            foreach ($projectStages as $stage) {
                 $tasks = ProjectTask::where('stage', $stage->id);
 
-                if(isset($request->project) && !empty($request->project))
-                {
+                if (isset($request->project) && !empty($request->project)) {
                     $tasks->where('project_id', $request->project);
                     $proj              = Project::find($request->project);
                     $filter['project'] = $proj->title;
                 }
 
-                if((isset($request->start_date) && !empty($request->start_date)) && (isset($request->end_date) && !empty($request->end_date)))
-                {
+                if ((isset($request->start_date) && !empty($request->start_date)) && (isset($request->end_date) && !empty($request->end_date))) {
                     $tasks->whereBetween(
-                        'start_date', [
+                        'start_date',
+                        [
                                         $request->start_date,
                                         $request->end_date,
                                     ]
                     );
                     $filter['startDateRange'] = $request->start_date;
                     $filter['endDateRange']   = $request->end_date;
-                }
-                else
-                {
-
-
+                } else {
                     $tasks->whereBetween(
-                        'start_date', [
+                        'start_date',
+                        [
                                         $start_date,
                                         $end_date,
                                     ]
@@ -76,8 +69,7 @@ class ReportController extends Controller
                 }
 
 
-                if(!empty($request->employee))
-                {
+                if (!empty($request->employee)) {
                     $tasks->where('assign_to', $request->employee);
                     $emp                = User::find($request->employee);
                     $filter['employee'] = $emp->name;
@@ -99,17 +91,14 @@ class ReportController extends Controller
 
 
             return view('report.task', compact('projects', 'stages', 'total', 'label', 'data', 'color', 'projectList', 'employees', 'filter'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
 
     public function timelog(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $filter['endDateRange']   = $end_date = date('Y-m-d');
             $filter['startDateRange'] = $start_date = date('Y-m-d', strtotime('-15 days'));
             $filter['project']        = __('All');
@@ -119,10 +108,10 @@ class ReportController extends Controller
             $timesheets = Timesheet::where('created_by', \Auth::user()->creatorId());
 
 
-            if((isset($request->start_date) && !empty($request->start_date)) && (isset($request->end_date) && !empty($request->end_date)))
-            {
+            if ((isset($request->start_date) && !empty($request->start_date)) && (isset($request->end_date) && !empty($request->end_date))) {
                 $timesheets->whereBetween(
-                    'start_date', [
+                    'start_date',
+                    [
                                     $request->start_date,
                                     $request->end_date,
                                 ]
@@ -131,24 +120,18 @@ class ReportController extends Controller
 
                 $filter['startDateRange'] = $request->start_date;
                 $filter['endDateRange']   = $request->end_date;
-            }
-            else
-            {
-
-
+            } else {
                 $timesheets->whereBetween(
-                    'start_date', [
+                    'start_date',
+                    [
                                     $start_date,
                                     $end_date,
                                 ]
                 );
-
-
             }
 
 
-            if(isset($request->project) && !empty($request->project))
-            {
+            if (isset($request->project) && !empty($request->project)) {
                 $timesheets->where('project_id', $request->project);
 
 
@@ -156,16 +139,14 @@ class ReportController extends Controller
                 $filter['project'] = $proj->title;
             }
 
-            if(isset($request->task) && !empty($request->task))
-            {
+            if (isset($request->task) && !empty($request->task)) {
                 $timesheets->where('task_id', $request->task);
 
                 $task           = ProjectTask::find($request->task);
                 $filter['task'] = $task->title;
             }
 
-            if(isset($request->employee) && !empty($request->employee))
-            {
+            if (isset($request->employee) && !empty($request->employee)) {
                 $timesheets->where('employee', $request->employee);
 
                 $emp                = User::find($request->employee);
@@ -192,31 +173,25 @@ class ReportController extends Controller
 
             $currentdate = $start;
 
-            while($currentdate <= $end)
-            {
-
+            while ($currentdate <= $end) {
                 $currentDateFormat = date('Y-m-d', $currentdate);
 
                 $timesheetsFilter = Timesheet::where('created_by', \Auth::user()->creatorId())->where('start_date', $currentDateFormat);
 
-                if(isset($request->project) && !empty($request->project))
-                {
+                if (isset($request->project) && !empty($request->project)) {
                     $timesheetsFilter->where('project_id', $request->project);
                 }
 
-                if(isset($request->task) && !empty($request->task))
-                {
+                if (isset($request->task) && !empty($request->task)) {
                     $timesheetsFilter->where('task_id', $request->task);
                 }
-                if(isset($request->employee) && !empty($request->employee))
-                {
+                if (isset($request->employee) && !empty($request->employee)) {
                     $timesheetsFilter->where('employee', $request->employee);
                 }
                 $timesheetsFilter = $timesheetsFilter->get();
 
                 $hours = 0;
-                foreach($timesheetsFilter as $timesheet)
-                {
+                foreach ($timesheetsFilter as $timesheet) {
                     $t1    = strtotime($timesheet->end_date . ' ' . $timesheet->end_time);
                     $t2    = strtotime($timesheet->start_date . ' ' . $timesheet->start_time);
                     $diff  = $t1 - $t2;
@@ -230,19 +205,15 @@ class ReportController extends Controller
 
 
             return view('report.timelog', compact('timesheets', 'projectList', 'employees', 'tasks', 'labels', 'data', 'filter'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
 
     public function finance(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $filter['project'] = __('All');
             $filter['client']  = __('All');
 
@@ -254,13 +225,10 @@ class ReportController extends Controller
 
             $invoices = Invoice::where('created_by', \Auth::user()->creatorId());
 
-            if(!empty($request->start_month) && !empty($request->end_month))
-            {
+            if (!empty($request->start_month) && !empty($request->end_month)) {
                 $start = strtotime($request->start_month);
                 $end   = strtotime($request->end_month);
-            }
-            else
-            {
+            } else {
                 $start = strtotime(date('Y-01-01'));
                 $end   = strtotime(date('Y-12-31'));
             }
@@ -268,15 +236,13 @@ class ReportController extends Controller
             $invoices->where('issue_date', '>=', date('Y-m-d', $start))->where('issue_date', '<=', date('Y-m-d', $end));
 
 
-            if(isset($request->project) && !empty($request->project))
-            {
+            if (isset($request->project) && !empty($request->project)) {
                 $invoices->where('project', $request->project);
                 $proj              = Project::find($request->project);
                 $filter['project'] = $proj->title;
             }
 
-            if(isset($request->client) && !empty($request->client))
-            {
+            if (isset($request->client) && !empty($request->client)) {
                 $invoices->where('client', $request->client);
                 $client           = User::find($request->client);
                 $filter['client'] = $client->name;
@@ -289,36 +255,31 @@ class ReportController extends Controller
 
             $currentdate = $start;
 
-            while($currentdate <= $end)
-            {
+            while ($currentdate <= $end) {
                 $monthYearList[] = date('Y-m', $currentdate);
 
                 $currentdate = strtotime('+1 month', $currentdate);
             }
 
             $invoicesTotal = $invoicesDue = $invoicesTax = $invoicesDiscount = 0;
-            foreach($monthYearList as $monthYearDate)
-            {
+            foreach ($monthYearList as $monthYearDate) {
                 $dateFormat = strtotime($monthYearDate);
                 $month      = date('m', $dateFormat);
                 $year       = date('Y', $dateFormat);
 
                 $invoicesFilter = Invoice::where('created_by', \Auth::user()->creatorId())->whereMonth('issue_date', $month)->whereYear('issue_date', $year);
 
-                if(isset($request->project) && !empty($request->project))
-                {
+                if (isset($request->project) && !empty($request->project)) {
                     $invoicesFilter->where('project', $request->project);
                 }
-                if(isset($request->client) && !empty($request->client))
-                {
+                if (isset($request->client) && !empty($request->client)) {
                     $invoicesFilter->where('client', $request->client);
                 }
                 $invoicesFilter = $invoicesFilter->get();
 
 
                 $total = $due = $tax = $discount = 0;
-                foreach($invoicesFilter as $invoice)
-                {
+                foreach ($invoicesFilter as $invoice) {
                     $total    += $invoice->getTotal();
                     $due      += $invoice->getDue();
                     $tax      += $invoice->getTotalTax();
@@ -336,70 +297,56 @@ class ReportController extends Controller
             $filter['endDateRange']   = date('M-Y', $end);
 
             return view('report.finance', compact('invoices', 'projectList', 'clients', 'labels', 'data', 'filter', 'invoicesTotal', 'invoicesDue', 'invoicesTax', 'invoicesDiscount'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
     public function incomeVsExpense(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $invoices     = Invoice::where('created_by', \Auth::user()->creatorId());
             $labels       = $data = [];
             $expenseCount = $incomeCount = 0;
 
-            if(!empty($request->start_month) && !empty($request->end_month))
-            {
+            if (!empty($request->start_month) && !empty($request->end_month)) {
                 $start = strtotime($request->start_month);
                 $end   = strtotime($request->end_month);
-            }
-            else
-            {
+            } else {
                 $start = strtotime(date('Y-01-01'));
                 $end   = strtotime(date('Y-12-31'));
             }
 
 
-            $invoicesFilter = Invoice::selectRaw('invoices.*,MONTH(send_date) as month,YEAR(send_date) as year')->where('created_by', \Auth::user()->creatorId())->where('send_date', '>=', date('Y-m-01', $start))->where('send_date', '<=', date('Y-m-t', $end))->get();
+            $invoicesFilter = Invoice::selectRaw('invoices.*,MONTH(send_date) as month,YEAR(send_date) as year')->where('created_by', \Auth::user()->creatorId())->get();//->where('send_date', '>=', date('Y-m-01', $start))->where('send_date', '<=', date('Y-m-t', $end))->get();
 
             $invoicesTotal     = 0;
             $invoiceTotalArray = [];
-            foreach($invoicesFilter as $invoice)
-            {
-                $invoicesTotal                        += $invoice->getTotal();
+            foreach ($invoicesFilter as $invoice) {
+                $invoicesTotal += $invoice->getTotal();
                 $invoiceTotalArray[$invoice->month][] = $invoice->getTotal();
             }
             $incomeCount += $invoicesTotal;
 
-            for($i = 1; $i <= 12; $i++)
-            {
+            for ($i = 1; $i <= 12; $i++) {
                 $incomeData[] = array_key_exists($i, $invoiceTotalArray) ? array_sum($invoiceTotalArray[$i]) : 0;
             }
-
 
             $expenseFilter    = Expense::selectRaw('expenses.*,MONTH(date) as month,YEAR(date) as year')->where('created_by', \Auth::user()->creatorId())->where('date', '>=', date('Y-m-01', $start))->where('date', '<=', date('Y-m-t', $end))->get();
             $expenseTotal     = 0;
             $expeseTotalArray = [];
-            foreach($expenseFilter as $expense)
-            {
+            foreach ($expenseFilter as $expense) {
                 $expenseTotal                        += $expense->amount;
                 $expeseTotalArray[$expense->month][] = $expense->amount;
             }
             $expenseCount += $expenseTotal;
 
-            for($i = 1; $i <= 12; $i++)
-            {
+            for ($i = 1; $i <= 12; $i++) {
                 $expenseData[] = array_key_exists($i, $expeseTotalArray) ? array_sum($expeseTotalArray[$i]) : 0;
             }
 
             $currentdate = $start;
-            while($currentdate <= $end)
-            {
+            while ($currentdate <= $end) {
                 $labels[]    = date('M Y', $currentdate);
                 $currentdate = strtotime('+1 month', $currentdate);
             }
@@ -424,28 +371,22 @@ class ReportController extends Controller
             $filter['endDateRange']   = date('M-Y', $end);
 
             return view('report.income_expense', compact('invoices', 'labels', 'data', 'incomeCount', 'expenseCount', 'filter'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
 
     public function leave(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $department = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $department->prepend('All', '');
             $filterYear['department']    = __('All');
             $filterYear['type']          = __('Monthly');
             $filterYear['dateYearRange'] = date('M-Y');
             $employees                   = Employee::where('created_by', \Auth::user()->creatorId());
-            if(!empty($request->department))
-            {
+            if (!empty($request->department)) {
                 $employees->where('department', $request->department);
                 $filterYear['department'] = !empty(Department::find($request->department)) ? Department::find($request->department)->name : '';
             }
@@ -453,9 +394,7 @@ class ReportController extends Controller
             
             $leaves        = [];
             $totalApproved = $totalReject = $totalPending = 0;
-            foreach($employees as $employee)
-            {
-                
+            foreach ($employees as $employee) {
                 $employeeLeave['id']          = $employee->user_id;
                 $employeeLeave['employee_id'] = $employee->employee_id;
                 $employeeLeave['employee']    = !empty($employee->users) ? $employee->users->name : '';
@@ -464,8 +403,7 @@ class ReportController extends Controller
                 $reject   = Leave::where('employee_id', $employee->user_id)->where('status', 'Reject');
                 $pending  = Leave::where('employee_id', $employee->user_id)->where('status', 'Pending');
                 
-                if($request->type == 'monthly' && !empty($request->month))
-                {
+                if ($request->type == 'monthly' && !empty($request->month)) {
                     $month = date('m', strtotime($request->month));
                     $year  = date('Y', strtotime($request->month));
                     
@@ -475,10 +413,7 @@ class ReportController extends Controller
 
                     $filterYear['dateYearRange'] = date('M-Y', strtotime($request->month));
                     $filterYear['type']          = __('Monthly');
-                    
-                }
-                elseif(!isset($request->type))
-                {
+                } elseif (!isset($request->type)) {
                     $month     = date('m');
                     $year      = date('Y');
                     $monthYear = date('Y-m');
@@ -492,8 +427,7 @@ class ReportController extends Controller
                 }
                 
                 
-                if($request->type == 'yearly' && !empty($request->year))
-                {
+                if ($request->type == 'yearly' && !empty($request->year)) {
                     $approved->whereYear('applied_on', $request->year);
                     $reject->whereYear('applied_on', $request->year);
                     $pending->whereYear('applied_on', $request->year);
@@ -530,25 +464,18 @@ class ReportController extends Controller
             $filter['totalPending']  = $totalPending;
             
             return view('report.leave', compact('department', 'leaves', 'filterYear', 'filter'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
 
     public function employeeLeave(Request $request, $employee_id, $status)
     {
-
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $leaveTypes = LeaveType::where('created_by', \Auth::user()->creatorId())->get();
             $leaves     = [];
-            foreach($leaveTypes as $leaveType)
-            {
+            foreach ($leaveTypes as $leaveType) {
                 $leave        = new Leave();
                 $leave->title = $leaveType->title;
                 $leave->total = Leave::where('employee_id', $employee_id)->where('status', $status)->where('leave_type', $leaveType->id)->count();
@@ -557,18 +484,14 @@ class ReportController extends Controller
             $leaveData = Leave::where('employee_id', $employee_id)->where('status', $status)->get();
 
             return view('report.leaveShow', compact('leaves', 'leaveData'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 
     public function estimate(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $filter['status'] = __('All');
             $filter['client'] = __('All');
 
@@ -579,26 +502,21 @@ class ReportController extends Controller
 
             $estimates = Estimate::orderBy('id');
 
-            if(!empty($request->client))
-            {
+            if (!empty($request->client)) {
                 $estimates->where('client', $request->client);
                 $client           = User::find($request->client);
                 $filter['client'] = $client->name;
             }
 
-            if($request->status != '')
-            {
+            if ($request->status != '') {
                 $estimates->where('status', $request->status);
                 $filter['status'] = Estimate::$statues[$request->status];
             }
 
-            if(!empty($request->start_month) && !empty($request->end_month))
-            {
+            if (!empty($request->start_month) && !empty($request->end_month)) {
                 $start = strtotime($request->start_month);
                 $end   = strtotime($request->end_month);
-            }
-            else
-            {
+            } else {
                 $start = strtotime(date('Y-01-d'));
                 $end   = strtotime(date('Y-12-31'));
             }
@@ -609,8 +527,7 @@ class ReportController extends Controller
             $estimates = $estimates->get();
 
             $totalEstimation = $totalTax = $totalDiscount = 0;
-            foreach($estimates as $estimation)
-            {
+            foreach ($estimates as $estimation) {
                 $totalEstimation += $estimation->getTotal();
                 $totalTax        += $estimation->getTotalTax();
                 $totalDiscount   += $estimation->getTotalDiscount();
@@ -619,21 +536,15 @@ class ReportController extends Controller
             $filter['endDateRange']   = date('M-Y', $end);
 
             return view('report.estimate', compact('status', 'clients', 'estimates', 'filter', 'totalEstimation', 'totalTax', 'totalDiscount'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
 
     public function invoice(Request $request)
     {
-
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $filter['status'] = __('All');
             $filter['client'] = __('All');
 
@@ -644,26 +555,21 @@ class ReportController extends Controller
 
             $invoices = Invoice::orderBy('id');
 
-            if(!empty($request->client))
-            {
+            if (!empty($request->client)) {
                 $invoices->where('client', $request->client);
                 $client           = User::find($request->client);
                 $filter['client'] = $client->name;
             }
 
-            if($request->status != '')
-            {
+            if ($request->status != '') {
                 $invoices->where('status', $request->status);
                 $filter['status'] = Invoice::$statues[$request->status];
             }
 
-            if(!empty($request->start_month) && !empty($request->end_month))
-            {
+            if (!empty($request->start_month) && !empty($request->end_month)) {
                 $start = strtotime($request->start_month);
                 $end   = strtotime($request->end_month);
-            }
-            else
-            {
+            } else {
                 $start = strtotime(date('Y-01'));
                 $end   = strtotime(date('Y-12'));
             }
@@ -674,8 +580,7 @@ class ReportController extends Controller
             $invoices = $invoices->get();
 
             $totalInvoice = $totalDue = $totalTax = $totalDiscount = 0;
-            foreach($invoices as $invoice)
-            {
+            foreach ($invoices as $invoice) {
                 $totalInvoice  += $invoice->getTotal();
                 $totalDue      += $invoice->getDue();
                 $totalTax      += $invoice->getTotalTax();
@@ -686,19 +591,14 @@ class ReportController extends Controller
 
 
             return view('report.invoice', compact('status', 'clients', 'invoices', 'filter', 'totalInvoice', 'totalDue', 'totalTax', 'totalDiscount'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
     public function client(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $start = strtotime(date('Y-01'));
             $end   = strtotime(date('Y-12'));
             
@@ -709,8 +609,7 @@ class ReportController extends Controller
 
             $clientFilter = User::where('created_by', \Auth::user()->creatorId())->where('type', 'client');
 
-            if(!empty($request->client))
-            {
+            if (!empty($request->client)) {
                 $clientFilter->where('id', $request->client);
                 $client           = User::find($request->client);
                 $filter['client'] = $client->name;
@@ -720,15 +619,12 @@ class ReportController extends Controller
 
             $clientReport       = [];
             $clientTotalInvoice = $clientTotalAmount = $clientTotalDue = $clientTotalTax = $clientTotalDiscount = $clientTotalPaid = 0;
-            foreach($clientFilter as $client)
-            {
-
+            foreach ($clientFilter as $client) {
                 $clientData['client'] = $client->name;
                 $totalAmount          = $totalTax = $totalDiscount = $totalDue = $totalPaid = 0;
                 $clientInvoice        = Invoice::orderBy('id');
 
-                if(!empty($request->start_month) && !empty($request->end_month))
-                {
+                if (!empty($request->start_month) && !empty($request->end_month)) {
                     $start = strtotime($request->start_month);
                     $end   = strtotime($request->end_month);
                 }
@@ -743,8 +639,7 @@ class ReportController extends Controller
                 $clientData['totalInvoice'] = count($clientInvoice);
                 $clientTotalInvoice         += count($clientInvoice);
 
-                foreach($clientInvoice as $invoice)
-                {
+                foreach ($clientInvoice as $invoice) {
                     $totalAmount   += $invoice->getTotal();
                     $totalTax      += $invoice->getTotalTax();
                     $totalDiscount += $invoice->getTotalDiscount();
@@ -771,31 +666,23 @@ class ReportController extends Controller
             $filter['endDateRange']   = date('M-Y', $end);
 
             return view('report.client', compact('clients', 'clientReport', 'filter', 'clientTotalInvoice', 'clientTotalAmount', 'clientTotalTax', 'clientTotalDiscount', 'clientTotalDue', 'clientTotalPaid'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
 
     public function lead(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
+        if (\Auth::user()->type == 'company') {
             $labels = [];
             $data   = [];
 
 
-            if(!empty($request->start_month) && !empty($request->end_month))
-            {
+            if (!empty($request->start_month) && !empty($request->end_month)) {
                 $start = strtotime($request->start_month);
                 $end   = strtotime($request->end_month);
-            }
-            else
-            {
+            } else {
                 $start = strtotime(date('Y-01'));
                 $end   = strtotime(date('Y-12'));
             }
@@ -806,8 +693,7 @@ class ReportController extends Controller
             $leads = $leads->get();
 
             $currentdate = $start;
-            while($currentdate <= $end)
-            {
+            while ($currentdate <= $end) {
                 $month = date('m', $currentdate);
                 $year  = date('Y', $currentdate);
 
@@ -816,27 +702,20 @@ class ReportController extends Controller
                 $data[]      = count($leadFilter);
                 $labels[]    = date('M Y', $currentdate);
                 $currentdate = strtotime('+1 month', $currentdate);
-
             }
 
             $filter['startDateRange'] = date('M-Y', $start);
             $filter['endDateRange']   = date('M-Y', $end);
 
             return view('report.lead', compact('labels', 'data', 'filter', 'leads'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-
     }
 
     public function attendance(Request $request)
     {
-        if(\Auth::user()->type == 'company')
-        {
-
+        if (\Auth::user()->type == 'company') {
             $department = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $department->prepend('All', '');
 
@@ -844,8 +723,7 @@ class ReportController extends Controller
 
             $employees = Employee::where('created_by', \Auth::user()->creatorId());
 
-            if(!empty($request->department))
-            {
+            if (!empty($request->department)) {
                 $employees->where('department', $request->department);
                 $data['department'] = !empty(Department::find($request->department)) ? Department::find($request->department)->name : '';
             }
@@ -853,16 +731,12 @@ class ReportController extends Controller
             $employees = $employees->get();
 
 
-            if(!empty($request->month))
-            {
+            if (!empty($request->month)) {
                 $currentdate = strtotime($request->month);
                 $month       = date('m', $currentdate);
                 $year        = date('Y', $currentdate);
                 $curMonth    = date('M-Y', strtotime($request->month));
-
-            }
-            else
-            {
+            } else {
                 $month    = date('m');
                 $year     = date('Y');
                 $curMonth = date('M-Y', strtotime($year . '-' . $month));
@@ -870,67 +744,49 @@ class ReportController extends Controller
 
 
             $num_of_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
-            for($i = 1; $i <= $num_of_days; $i++)
-            {
+            for ($i = 1; $i <= $num_of_days; $i++) {
                 $dates[] = str_pad($i, 2, '0', STR_PAD_LEFT);
             }
 
             $employeesAttendance = [];
             $totalPresent        = $totalLeave = $totalEarlyLeave = 0;
             $ovetimeHours        = $overtimeMins = $earlyleaveHours = $earlyleaveMins = $lateHours = $lateMins = 0;
-            foreach($employees as $employee)
-            {
-
+            foreach ($employees as $employee) {
                 $attendances['name'] = !empty($employee->users) ? $employee->users->name : '';
 
-                foreach($dates as $date)
-                {
+                foreach ($dates as $date) {
                     $dateFormat = $year . '-' . $month . '-' . $date;
 
-                    if($dateFormat <= date('Y-m-d'))
-                    {
+                    if ($dateFormat <= date('Y-m-d')) {
                         $employeeAttendance = Attendance::where('employee_id', $employee->user_id)->where('date', $dateFormat)->first();
 
-                        if(!empty($employeeAttendance) && $employeeAttendance->status == 'Present')
-                        {
+                        if (!empty($employeeAttendance) && $employeeAttendance->status == 'Present') {
                             $attendanceStatus[$date] = 'P';
                             $totalPresent            += 1;
 
-                            if($employeeAttendance->overtime > 0)
-                            {
+                            if ($employeeAttendance->overtime > 0) {
                                 $ovetimeHours += date('h', strtotime($employeeAttendance->overtime));
                                 $overtimeMins += date('i', strtotime($employeeAttendance->overtime));
                             }
 
-                            if($employeeAttendance->early_leaving > 0)
-                            {
+                            if ($employeeAttendance->early_leaving > 0) {
                                 $earlyleaveHours += date('h', strtotime($employeeAttendance->early_leaving));
                                 $earlyleaveMins  += date('i', strtotime($employeeAttendance->early_leaving));
                             }
 
-                            if($employeeAttendance->late > 0)
-                            {
+                            if ($employeeAttendance->late > 0) {
                                 $lateHours += date('h', strtotime($employeeAttendance->late));
                                 $lateMins  += date('i', strtotime($employeeAttendance->late));
                             }
-
-
-                        }
-                        elseif(!empty($employeeAttendance) && $employeeAttendance->status == 'Leave')
-                        {
+                        } elseif (!empty($employeeAttendance) && $employeeAttendance->status == 'Leave') {
                             $attendanceStatus[$date] = 'L';
                             $totalLeave              += 1;
-                        }
-                        else
-                        {
+                        } else {
                             $attendanceStatus[$date] = '';
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $attendanceStatus[$date] = '';
                     }
-
                 }
                 $attendances['status'] = $attendanceStatus;
                 $employeesAttendance[] = $attendances;
@@ -948,11 +804,8 @@ class ReportController extends Controller
             $data['curMonth']        = $curMonth;
 
             return view('report.attendance', compact('employeesAttendance', 'department', 'dates', 'data'));
-        }
-        else
-        {
+        } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
-
     }
 }
