@@ -11,16 +11,16 @@
     <?php
     /**
      * PHP version 7.4
-     * 
+     *
      * @category Asjk
      * non class file
-     * 
+     *
      * @package View
-     * 
+     *
      * @author Simms Kwarteng <simmslabs@gmail.com>
-     * 
+     *
      * @license MIT License (http://www.opensource.org/licenses/)
-     * 
+     *
      * @link https://github.com/
      */
     if ($invoice->getDue() > 0 && Utility::getValByName('enable_stripe') == 'on' && !empty(Utility::getValByName('stripe_key')) && !empty(Utility::getValByName('stripe_secret'))) : ?>
@@ -160,7 +160,7 @@
                         <div class="col">
                             <h3 class="mb-0">{{__('Purchase Invoice')}}</h3>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create purchace invoice'))
                         @if($invoice->status!=0 && $invoice->status!=5)
                         <div class="col-auto">
                             <a href="#" data-url="{{route('purchaseinvoice.create.item',$invoice->id)}}" data-ajax-popup="true" data-title="{{__('Add Item')}}" class="btn btn-outline-primary btn-sm">

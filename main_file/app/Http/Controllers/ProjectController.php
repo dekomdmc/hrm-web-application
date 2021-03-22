@@ -369,7 +369,7 @@ class ProjectController extends Controller
 
     public function taskStore(Request $request, $projec_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('create project task')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -493,7 +493,7 @@ class ProjectController extends Controller
 
     public function taskDestroy($task_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit project task')) {
             $task    = ProjectTask::find($task_id);
             $project = Project::find($task->project_id);
             if ($project->created_by == \Auth::user()->creatorId()) {
@@ -570,7 +570,7 @@ class ProjectController extends Controller
 
     public function checklistDestroy(Request $request, $task_id, $checklist_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit project task')) {
             $checklist = ProjectTaskCheckList::find($checklist_id);
             $checklist->delete();
 
@@ -664,7 +664,7 @@ class ProjectController extends Controller
 
     public function milestoneStore(Request $request, $project_id)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('create project milestone')) {
             $project = Project::find($project_id);
 
             $validator = \Validator::make(
@@ -717,7 +717,7 @@ class ProjectController extends Controller
 
     public function milestoneUpdate($id, Request $request)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit project milestone')) {
             $milestone = ProjectMilestone::find($id);
             $validator = \Validator::make(
                 $request->all(),

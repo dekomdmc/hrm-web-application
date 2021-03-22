@@ -51,6 +51,13 @@ class PurchaseInvoice extends Controller
         return $latest->invoice_id + 1;
     }
 
+    public function getClientProject(Request $request)
+    {
+        $projects = \App\Project::where('client', $request->client_id)->get()->pluck('title', 'id');
+
+        return response()->json($projects);
+    }
+
     public function store(Request $request)
     {
         // if (Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
@@ -199,68 +206,68 @@ class PurchaseInvoice extends Controller
 
     public function itemDelete($id, $item_id)
     {
-        // if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
-        $invoice        = \App\PurchaseInvoice::find($id);
-        $invoiceProduct = \App\PurchaseInvoiceProduct::find($item_id);
-        $invoiceProduct->delete();
-        //        if($invoice->getDue() <= 0.0)
-        //        {
-        //            Invoice::change_status($invoice->id, 3);
-        //        }
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
+            $invoice        = \App\PurchaseInvoice::find($id);
+            $invoiceProduct = \App\PurchaseInvoiceProduct::find($item_id);
+            $invoiceProduct->delete();
+            //        if($invoice->getDue() <= 0.0)
+            //        {
+            //            Invoice::change_status($invoice->id, 3);
+            //        }
 
-        return redirect()->back()->with('success', __('Item successfully deleted.'));
-        // } else {
-        //     return redirect()->back()->with('error', __('Permission denied.'));
-        // }
+            return redirect()->back()->with('success', __('Item successfully deleted.'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
     }
 
     public function storeProduct(Request $request, $invoice_id)
     {
-        // if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
-        $itemname = "";
-        if ($request->custom_itemcheck == "on") {
-            if (!empty($request->item_name)) {
-                $itemname = $request->item_name;
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
+            $itemname = "";
+            if ($request->custom_itemcheck == "on") {
+                if (!empty($request->item_name)) {
+                    $itemname = $request->item_name;
+                }
+            } else {
+                if (!empty($request->item)) {
+                    $itemname = Item::find($request->item)->name;
+                }
             }
-        } else {
-            if (!empty($request->item)) {
-                $itemname = Item::find($request->item)->name;
+
+            if ($itemname == "") {
+                return redirect()->back()->with('error', __('Item name cannot be empty'));
             }
-        }
 
-        if ($itemname == "") {
-            return redirect()->back()->with('error', __('Item name cannot be empty'));
-        }
-
-        $validator = \Validator::make(
-            $request->all(),
-            [
+            $validator = \Validator::make(
+                $request->all(),
+                [
                     'quantity' => 'required',
                     'price' => 'required',
                 ]
-        );
+            );
 
-        if ($validator->fails()) {
-            $messages = $validator->getMessageBag();
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
 
-            return redirect()->back()->with('error', $messages->first());
+                return redirect()->back()->with('error', $messages->first());
+            }
+
+            $invoiceProduct              = new \App\PurchaseInvoiceProduct();
+            $invoiceProduct->invoice     = $invoice_id;
+            $invoiceProduct->item        = $itemname;
+            $invoiceProduct->quantity    = $request->quantity;
+            $invoiceProduct->price       = $request->price;
+            $invoiceProduct->discount    = $request->discount;
+            $invoiceProduct->type        = __('product');
+            $invoiceProduct->tax         = $request->tax;
+            $invoiceProduct->description = $request->description;
+            $invoiceProduct->save();
+
+            return redirect()->back()->with('success', 'Invoice product successfully created.');
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
         }
-
-        $invoiceProduct              = new \App\PurchaseInvoiceProduct();
-        $invoiceProduct->invoice     = $invoice_id;
-        $invoiceProduct->item        = $itemname;
-        $invoiceProduct->quantity    = $request->quantity;
-        $invoiceProduct->price       = $request->price;
-        $invoiceProduct->discount    = $request->discount;
-        $invoiceProduct->type        = __('product');
-        $invoiceProduct->tax         = $request->tax;
-        $invoiceProduct->description = $request->description;
-        $invoiceProduct->save();
-
-        return redirect()->back()->with('success', 'Invoice product successfully created.');
-        // } else {
-        //     return redirect()->back()->with('error', __('Permission denied.'));
-        // }
     }
 
     public function send($id)
@@ -338,11 +345,22 @@ class PurchaseInvoice extends Controller
         $validator = \Validator::make(
             $request->all(),
             [
-                    'amount' => 'required|numeric|min:1',
-                    'date' => 'required',
-                    'payment_method' => 'required',
-                ]
+                'amount' => 'required|numeric|min:1',
+                'date' => 'required',
+                'payment_method' => 'required',
+            ]
         );
+
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first());
+        }
+        $transactionId = strtoupper(str_replace('.', '', uniqid('', true)));
+        
+        $client     = \App\Supplier::find($invoice->client);
+        if ($client == null) {
+            return redirect()->back()->with('error', __('Set client on invoice.'));
+        }
 
         $expense = new \App\Expense();
         $expense->date = $request->date;
@@ -352,11 +370,6 @@ class PurchaseInvoice extends Controller
         $expense->purchase_invoice = $invoice->id;
         $expense->save();
 
-        if ($validator->fails()) {
-            $messages = $validator->getMessageBag();
-            return redirect()->back()->with('error', $messages->first());
-        }
-        $transactionId = strtoupper(str_replace('.', '', uniqid('', true)));
 
         \App\PurchaseInvoicePayment::create(
             [
@@ -380,7 +393,6 @@ class PurchaseInvoice extends Controller
             \App\PurchaseInvoice::change_status($invoice->id, 3);
         }
 
-        $client     = User::find($invoice->client);
 
         $invoiceArr = [
                 'invoice_id' => \Auth::user()->invoiceNumberFormat($invoice->invoice_id),

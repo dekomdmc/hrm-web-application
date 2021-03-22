@@ -27,7 +27,7 @@
                         <div class="col">
                             <h2 class="h3 mb-0">{{__('Manage Items (Products)')}}</h2>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create product'))
                         <div class="col-auto">
                             <span class="create-btn">
                                 <a href="#" data-url="{{ route('item.create') }}" data-ajax-popup="true" data-title="{{__('Create New Item')}}" class="btn btn-outline-primary btn-sm">
@@ -70,7 +70,7 @@
                                 <th>{{__('Unit')}}</th>
                                 <th>{{__('Type')}}</th>
                                 <th>{{__('Description')}}</th>
-                                @if(\Auth::user()->type=='company')
+                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
                                 <th class="text-right">{{__('Action')}}</th>
                                 @endif
                             </tr>
@@ -100,7 +100,7 @@
                                 <td>{{ !empty($item->units)?$item->units->name:'' }}</td>
                                 <td>{{ $item->type }}</td>
                                 <td>{{ $item->description }}</td>
-                                @if(\Auth::user()->type=='company')
+                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
                                 <td class="action text-right">
                                     <a href="#" data-url="{{ route('item.edit',$item->id) }}" data-ajax-popup="true" data-title="{{__('Edit Item')}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}">
                                         <i class="far fa-edit"></i>

@@ -97,7 +97,7 @@
                         <div class="col">
                             <h2 class="h3 mb-0">{{__('Manage Purchase Invoice')}}</h2>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' ||\Auth::user()->hasPermissionTo('create purchace invoice'))
                         <div class="col-auto">
                             <span class="create-btn">
                                 <a href="#" data-url="{{ route('purchaseinvoice.create') }}" data-ajax-popup="true" data-title="{{__('Create New Invoice')}}" class="btn btn-outline-primary btn-sm">
@@ -138,7 +138,7 @@
                                 <td></td>
                                 <td><a class="btn btn-outline-primary btn-sm" href="{{route('purchaseinvoice.show',\Crypt::encrypt($invoice->id))}}">{{\Auth::user()->invoiceNumberFormat($invoice->invoice_id)}}</a></td>
                                 @if(\Auth::user()->type!='client')
-                                <td>{{!empty($invoice->clients)?$invoice->clients->name:''}}</td>
+                                <td>{{(new \App\PurchaseInvoice)->getInvoiceClientNameById($invoice->client)}}</td>
                                 @endif
                                 <td>{{\Auth::user()->dateFormat($invoice->issue_date)}}</td>
                                 <td>{{\Auth::user()->dateFormat($invoice->due_date)}}</td>
@@ -164,7 +164,7 @@
                                     <a href="{{route('purchaseinvoice.show',\Crypt::encrypt($invoice->id))}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('View')}}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    @if(\Auth::user()->type=='company')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit purchase invoice'))
                                     <a href="#!" data-url="{{ route('purchaseinvoice.edit',$invoice->id) }}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}" data-ajax-popup="true" data-title="{{__('Edit Purchase Invoice')}}">
                                         <i class="far fa-edit"></i>
                                     </a>

@@ -10,7 +10,6 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class StockItemsExport implements WithHeadings, FromCollection
 {
-
     use Exportable;
 
     public function headings(): array
@@ -20,10 +19,10 @@ class StockItemsExport implements WithHeadings, FromCollection
 
     public function collection()
     {
-        $items = \App\StockItem::query()->where("type","service")->get(['name', 'sku', 'sale_price', 'purchase_price', 'quantity', 'tax', 'category', 'unit', 'type', 'description']);
+        $items = \App\Item::query()->where("type", "service")->get(['name', 'sku', 'sale_price', 'purchase_price', 'quantity', 'tax', 'category', 'unit', 'type', 'description']);
         foreach ($items as $item) {
-            $item->unit = (new \App\StockItem)->getUnitNameById($item->unit);
-            $item->category = (new \App\StockItem)->getCategoryNameById($item->category);
+            $item->unit = (new \App\Item)->getUnitNameById($item->unit);
+            $item->category = (new \App\Item)->getCategoryNameById($item->category);
         }
         return $items;
     }

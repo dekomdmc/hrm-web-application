@@ -16,6 +16,7 @@ class Item extends Model
         'quantity',
         'category',
         'unit',
+        'is_mode',
         'type',
         'description',
         'created_by',
@@ -66,9 +67,9 @@ class Item extends Model
     public function getItemIDByName(string $name)
     {
         $item = DB::table('items')->where("name", "=", $name)->get();
-        if(count($item) == 1){
+        if (count($item) == 1) {
             return $item[0]->id;
-        }else{
+        } else {
             return null;
         }
     }

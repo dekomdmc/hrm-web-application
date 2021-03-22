@@ -72,7 +72,7 @@
                                 @forelse ($projectStages as $project_stages)
                                     <li class="list-group-item" data-id="{{$project_stages->id}}">
                                         {{$project_stages->name}}
-                                        @if(\Auth::user()->type=='company')
+                                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit project'))
                                             <span class="float-right">
                                             <a href="#" data-url="{{ route('projectStage.edit',$project_stages->id) }}" data-ajax-popup="true" data-title="{{__('Edit Project Stage')}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}">
                                                 <i class="far fa-edit"></i>

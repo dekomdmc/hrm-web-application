@@ -14,12 +14,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
-
     public function index()
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view stock')) {
             $items = Item::where('created_by', '=', \Auth::user()->creatorId())->where('is_mode', 'stock')->get();
-
             return view('item.index', compact('items'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -49,8 +47,7 @@ class ItemController extends Controller
 
     public function prices()
     {
-
-        $items = Item::where('created_by', '=', \Auth::user()->creatorId())->where('is_mode', '=', NULL)->get();
+        $items = Item::where('created_by', '=', \Auth::user()->creatorId())->where('is_mode', '=', null)->get();
         return view('item.prices', compact('items'));
     }
 
@@ -66,7 +63,6 @@ class ItemController extends Controller
 
     public function pricesStore(Request $request)
     {
-
         if (\Auth::user()->type == 'company') {
             $rules = [
                 'name' => 'required',
@@ -113,7 +109,7 @@ class ItemController extends Controller
             if (count($items) > 0) {
                 foreach ($items as $items_) {
                     if (count($items_) > 0) {
-                        \App\Item::where('is_mode', '=', NULL)->delete();
+                        \App\Item::where('is_mode', '=', null)->delete();
                         foreach ($items_ as $item) {
                             if ($item[0] != 'NAME') {
                                 $arr = [
@@ -146,7 +142,7 @@ class ItemController extends Controller
             if (count($items) > 0) {
                 foreach ($items as $items_) {
                     if (count($items_) > 0) {
-                        Item::truncate();
+                        Item::where("is_mode", "=", "stock")->delete();
                         foreach ($items_ as $item) {
                             if ($item[0] != 'NAME') {
                                 $arr = [
@@ -159,6 +155,7 @@ class ItemController extends Controller
                                     'category' => (new Item)->getCategoryIdByName($item[6]),
                                     'unit' => (new Item)->getUnitIdByName($item[7]),
                                     'type' => $item[8],
+                                    'is_mode' => $item[8] == "product" ? 'stock' : null,
                                     'description' => $item[9] == "" ? "No Description" : $item[9],
                                     'created_by' => Auth::user()->id
                                 ];
@@ -174,7 +171,7 @@ class ItemController extends Controller
 
     public function exportExcel()
     {
-        return (new ItemsExport)->download('Item.xlsx');
+        return (new ItemsExport)->download('PriceItem.xlsx');
     }
 
     public function createStockItemExport()
@@ -185,8 +182,7 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
-
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('create product')) {
             $rules = [
                 'name' => 'required',
                 'sku' => 'required',
@@ -254,7 +250,7 @@ class ItemController extends Controller
 
     public function update(Request $request, Item $item)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit product')) {
             $rules = [
                 'name' => 'required',
                 'sku' => 'required',
@@ -286,7 +282,7 @@ class ItemController extends Controller
             $item->quantity           = $request->quantity;
             $item->category       = $request->category;
             $item->save();
-            if ($item->is_mode != NULL) {
+            if ($item->is_mode != null) {
                 return redirect()->route('item.index')->with('success', __('Item successfully updated.'));
             } else {
                 return redirect()->route('item.prices')->with('success', __('Item successfully updated.'));
@@ -300,7 +296,7 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         if (\Auth::user()->type == 'company') {
-            if ($item->is_mode != NULL) {
+            if ($item->is_mode != null) {
                 $item->delete();
                 return redirect()->route('item.index')->with('success', __('Item successfully deleted.'));
             } else {

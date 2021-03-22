@@ -111,4 +111,10 @@ class PurchaseInvoice extends Model
         $invoice->status = $status;
         $invoice->update();
     }
+
+    public function getInvoiceClientNameById($client_id)
+    {
+        $supplier = \App\Supplier::find($client_id);
+        return $supplier->company_name;
+    }
 }

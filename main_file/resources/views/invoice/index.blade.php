@@ -97,7 +97,7 @@
                         <div class="col">
                             <h2 class="h3 mb-0">{{__('Manage Invoice')}}</h2>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create sales invoice'))
                         <div class="col-auto">
                             <span class="create-btn">
                                 <a href="#" data-url="{{ route('invoice.create') }}" data-ajax-popup="true" data-title="{{__('Create New Invoice')}}" class="btn btn-outline-primary btn-sm">

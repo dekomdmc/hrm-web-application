@@ -23,7 +23,7 @@
                             <div class="col">
                                 <h2 class="h3 mb-0">{{__('Manage Complaint')}}</h2>
                             </div>
-                            @if(\Auth::user()->type=='company' || \Auth::user()->type=='employee')
+                            @if(\Auth::user()->type == 'company' || \Auth::user()->type== 'employee')
                                 <div class="col-auto">
                                     <span class="create-btn">
                                         <a href="#" data-url="{{ route('complaint.create') }}" data-ajax-popup="true" data-title="{{__('Create New Complaint')}}" class="btn btn-outline-primary btn-sm">

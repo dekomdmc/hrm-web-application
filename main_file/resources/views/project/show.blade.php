@@ -682,7 +682,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                 <div class="col">
                                                     <h2 class="h3 mb-0">{{__('Tasks')}}</h2>
                                                 </div>
-                                                @if(\Auth::user()->type=='company')
+                                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create project task'))
                                                 <div class="col-auto">
                                                     <span class="create-btn">
                                                         <a href="#" data-url="{{ route('project.task.create',$project->id) }}" data-ajax-popup="true" data-title="{{__('Create New Task')}}" class="btn btn-outline-primary btn-sm">
@@ -729,7 +729,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                             <a href="#" data-url="{{ route('project.task.show',$task->id) }}" data-ajax-popup="true" data-title="{{__('Task Detail')}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('View')}}">
                                                                 <i class="fas fa-eye"></i>
                                                             </a>
-                                                            @if(\Auth::user()->type=='company')
+                                                            @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit project task'))
                                                             <a href="#" data-url="{{ route('project.task.edit',$task->id) }}" data-ajax-popup="true" data-title="{{__('Edit Task')}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}">
                                                                 <i class="far fa-edit"></i>
                                                             </a>
@@ -758,7 +758,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                 <div class="col">
                                                     <h2 class="h3 mb-0">{{__('Milestone')}}</h2>
                                                 </div>
-                                                @if(\Auth::user()->type=='company')
+                                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create project milestone'))
                                                 <div class="col-auto">
                                                     <a href="#" data-url="{{ route('project.milestone.create',$project->id) }}" data-ajax-popup="true" data-title="{{__('Create New Milestone')}}" class="btn btn-outline-primary btn-sm">
                                                         <i class="fa fa-plus"></i> {{__('Create')}}
@@ -776,7 +776,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                         <th>{{__('Due Date')}}</th>
                                                         <th>{{__('Status')}}</th>
                                                         <th width="20%">{{__('Description')}}</th>
-                                                        @if(\Auth::user()->type=='company')
+                                                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit project milestone'))
                                                         <th class="text-right">{{__('Action')}}</th>
                                                         @endif
                                                     </tr>
@@ -796,7 +796,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                             @endif
                                                         </td>
                                                         <td> {{$milestone->description}}</td>
-                                                        @if(\Auth::user()->type=='company')
+                                                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit project milestone'))
                                                         <td class="text-right">
                                                             <a href="#" data-url="{{ route('project.milestone.edit',$milestone->id) }}" data-ajax-popup="true" data-title="{{__('Edit Milestone')}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}">
                                                                 <i class="far fa-edit"></i>

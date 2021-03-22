@@ -146,7 +146,7 @@
                         <div class="col">
                             <h3 class="mb-0">{{__('Invoice')}}</h3>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
                         @if($invoice->status!=0 && $invoice->status!=5)
                         <div class="col-auto">
                             <a href="#" data-url="{{route('invoice.create.item',$invoice->id)}}" data-ajax-popup="true" data-title="{{__('Add Item')}}" class="btn btn-outline-primary btn-sm">
@@ -262,7 +262,7 @@
                             <div class="tx-gray-500 small">{{__('Due Date')}}</div>
                             <div class="font-weight-bold">{{\Auth::user()->dateFormat($invoice->due_date)}}</div>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
                         <div class="col-md-2">
                             <select class="form-control custom-select status_change font-style" name="status" data-url="{{route('invoice.status.change',$invoice->id)}}">
                                 @foreach($status as $k=>$val)
@@ -409,7 +409,7 @@
                                 <td>{{$payment->payment_type}} </td>
                                 <td>{{$payment->notes}} </td>
                                 <td class="text-right"> {{\Auth::user()->priceFormat(($payment->amount))}}</td>
-                                @if(\Auth::user()->type=='company')
+                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit sales invoice'))
                                 <td width="5%">
                                     <a href="#" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="{{__('Delete')}}" data-confirm="Are You Sure?|This action can not be undone. Do you want to continue?" data-confirm-yes="document.getElementById('payment-delete-form-{{$payment->id}}').submit();">
                                         <i class="fas fa-trash"></i>

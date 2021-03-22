@@ -86,6 +86,12 @@
 
                             <tbody>
                                 @foreach ($EmailTemplates as $EmailTemplate)
+                                <pre>
+                                    <?php
+                                        print_r($EmailTemplate);
+                                        exit;
+                                    ?>
+                                </pre>
                                 <tr>
                                     <td></td>
                                     <td>{{ $EmailTemplate->name }}</td>

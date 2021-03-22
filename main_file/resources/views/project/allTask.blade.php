@@ -426,7 +426,7 @@ $profile=asset(Storage::url('uploads/avatar/'));
                                                 <div class="col">
                                                     <h2 class="h3 mb-0">{{__('Tasks')}}</h2>
                                                 </div>
-                                                @if(\Auth::user()->type=='company')
+                                                @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('create project task'))
                                                 <div class="col-auto">
                                                     <span class="create-btn">
                                                         <a href="#" data-url="{{ route('project.task.create',0) }}" data-ajax-popup="true" data-title="{{__('Create New Task')}}" class="btn btn-outline-primary btn-sm">
