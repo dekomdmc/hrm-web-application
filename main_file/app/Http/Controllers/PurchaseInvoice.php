@@ -196,6 +196,34 @@ class PurchaseInvoice extends Controller
         return view('purchaseinvoice.edit', compact('clients', 'taxes', 'invoice'));
     }
 
+    public function update(Request $request, Invoice $invoice)
+    {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
+            $validator = \Validator::make(
+                $request->all(),
+                [
+                    'issue_date' => 'required',
+                    'due_date' => 'required',
+                ]
+            );
+
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
+
+                return redirect()->back()->with('error', $messages->first());
+            }
+
+            $invoice->issue_date  = $request->issue_date;
+            $invoice->due_date    = $request->due_date;
+            $invoice->description = $request->description;
+            $invoice->save();
+
+            return redirect()->route('invoice.index')->with('success', 'Invoice successfully updated.');
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+
     public function createItem($invoice_id)
     {
         $items = \App\Item::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');

@@ -193,7 +193,7 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                                     <a href="{{route('deal.index')}}" class="nav-link">{{__('Deal')}}</a>
                                 </li>
                                 @endif
-                                @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->type=='employee')
+                                @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->hasPermissionTo('view estimate'))
                                 <li class="nav-item {{ (Request::segment(1) == 'estimate')?'active open':''}}">
                                     <a href="{{route('estimate.index')}}" class="nav-link">{{__('Estimate')}}</a>
                                 </li>
@@ -434,10 +434,10 @@ $company_small_logo=Utility::getValByName('company_small_logo');
                                 <li class="nav-item {{ (Request::segment(1) == 'leave-report')?'active open':''}}">
                                     <a href="{{route('report.leave')}}" class="nav-link">{{__('Leave')}}</a>
                                 </li>
-
                                 <li class="nav-item {{ (Request::segment(1) == 'estimate-report')?'active open':''}}">
                                     <a href="{{route('report.estimate')}}" class="nav-link">{{__('Estimate')}}</a>
                                 </li>
+
                                 <li class="nav-item {{ (Request::segment(1) == 'invoice-report')?'active open':''}}">
                                     <a href="{{route('report.invoice')}}" class="nav-link">{{__('Sales Invoice')}}</a>
                                 </li>

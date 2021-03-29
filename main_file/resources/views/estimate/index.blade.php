@@ -60,7 +60,7 @@
                         <div class="col">
                             <h2 class="h3 mb-0">{{__('Manage Estimate')}}</h2>
                         </div>
-                        @if(\Auth::user()->type=='company')
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo("create estimate"))
                         <div class="col-auto">
                             <span class="create-btn">
                                 <a href="{{ route('estimate.create') }}" class="btn btn-outline-primary btn-sm">
@@ -75,6 +75,7 @@
                     <table class="table table-flush" id="datatable-basic">
                         <thead class="thead-light">
                             <tr>
+                                <th></th>
                                 <th>#</th>
                                 @if(\Auth::user()->type != 'client')
                                 <th>{{__('Client')}}</th>
@@ -89,6 +90,7 @@
                         <tbody>
                             @foreach($estimates as $estimate)
                             <tr>
+                                <td></td>
                                 <td><a class="btn btn-outline-primary btn-sm" href="{{ route('estimate.show',$estimate->id) }}">{{\Auth::user()->estimateNumberFormat($estimate->estimate)}}</a></td>
                                 @if(\Auth::user()->type != 'client')
                                 <td>{{!empty($estimate->clients)?$estimate->clients->name:''}}</td>

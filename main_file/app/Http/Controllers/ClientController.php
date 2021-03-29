@@ -112,14 +112,14 @@ class ClientController extends Controller
 
     public function edit($id)
     {
-        if (\Auth::user()->type == 'company') {
-            $user   = User::find($id);
-            $client = Client::where('user_id', $id)->first();
+        // if (\Auth::user()->type == 'company') {
+        $user   = User::find($id);
+        $client = Client::where('user_id', $id)->first();
 
-            return view('client.edit', compact('user', 'client'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        return view('client.edit', compact('user', 'client'));
+        // } else {
+            // return redirect()->back()->with('error', __('Permission denied.'));
+        // }
     }
 
     public function bulkdelete(Request $request)
@@ -138,12 +138,12 @@ class ClientController extends Controller
                 $request->all(),
                 [
                     'mobile' => 'required',
-                    'company_name' => 'required',
-                    'address_1' => 'required',
-                    'city' => 'required',
-                    'state' => 'required',
-                    'country' => 'required',
-                    'zip_code' => 'required',
+                    // 'company_name' => 'required',
+                    // 'address_1' => 'required',
+                    // 'city' => 'required',
+                    // 'state' => 'required',
+                    // 'country' => 'required',
+                    // 'zip_code' => 'required',
 
                 ]
             );
@@ -232,14 +232,12 @@ class ClientController extends Controller
                                 'is_active' => 1
                             ];
                             $user = User::create($user_arr);
-
                             $cl_arr = [
                                 'user_id' => $user->id,
                                 'client_id' => $user->id,
                                 'mobile' => $client[2],
                                 'created_by' => Auth::user()->id
                             ];
-
                             $cl = Client::create($cl_arr);
                         }
                     }

@@ -16,15 +16,14 @@ use Illuminate\Support\Facades\Storage;
 
 class EstimateController extends Controller
 {
-
     public function __construct()
     {
     }
 
     public function index(Request $request)
     {
-        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client') {
-            if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view estimate')) {
+            if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view estimate')) {
                 $query = Estimate::where('created_by', '=', \Auth::user()->creatorId());
             } else {
                 $query = Estimate::where('client', '=', \Auth::user()->id);
@@ -76,8 +75,7 @@ class EstimateController extends Controller
      */
     public function store(Request $request)
     {
-
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('create estimate')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -164,7 +162,6 @@ class EstimateController extends Controller
 
     public function update(Request $request, Estimate $estimate)
     {
-
         if (\Auth::user()->type == 'company') {
             $validator = \Validator::make(
                 $request->all(),
@@ -230,7 +227,7 @@ class EstimateController extends Controller
         return redirect()->back()->with('success', __('Estimate successfully deleted.'));
     }
 
-    function estimateNumber()
+    public function estimateNumber()
     {
         $latest = Estimate::where('created_by', '=', \Auth::user()->creatorId())->latest()->first();
         if (!$latest) {
@@ -424,7 +421,6 @@ class EstimateController extends Controller
         $totalDiscount = 0;
         $taxesData     = [];
         foreach ($estimate->items as $product) {
-
             $item           = new \stdClass();
             $item->name     = !empty($product->items) ? $product->items->name : '';
             $item->quantity = $product->quantity;
@@ -439,7 +435,6 @@ class EstimateController extends Controller
             $taxes     = \Utility::tax($item->tax);
             $itemTaxes = [];
             foreach ($taxes as $tax) {
-
                 if (is_object($tax)) {
                     $taxPrice      = \Utility::taxRate($tax->rate, $item->price, $item->quantity);
                     $totalTaxPrice += $taxPrice;
@@ -477,7 +472,6 @@ class EstimateController extends Controller
         $img          = asset($logo . '/' . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo.png'));
 
         if ($estimate) {
-
             $color      = '#' . $settings['estimate_color'];
             $font_color = Utility::getFontColor($color);
 
@@ -508,7 +502,6 @@ class EstimateController extends Controller
 
     public function convert($estimation_id)
     {
-
         $estimation             = Estimate::where('id', $estimation_id)->first();
         $estimation->is_convert = 1;
         $estimation->save();
@@ -546,7 +539,7 @@ class EstimateController extends Controller
         return redirect()->back()->with('success', __('Estimate to invoice converted successfully.'));
     }
 
-    function invoiceNumber()
+    public function invoiceNumber()
     {
         $latest = Estimate::where('created_by', '=', \Auth::user()->creatorId())->latest()->first();
         if (!$latest) {

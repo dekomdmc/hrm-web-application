@@ -17,12 +17,11 @@ $(document).ready(function() {
     common_bind();
     common_bind_select();
 
-    $('[data-confirm]').each(function() {
-        var me = $(this),
-            me_data = me.data('confirm');
-
+    $(document).on("click", '[data-confirm]', function() {
+        let me = $(this);
+        let me_data = me.data('confirm');
         me_data = me_data.split("|");
-        me.fireModal({
+        $(this).fireModal({
             title: me_data[0],
             body: me_data[1],
             buttons: [{
@@ -41,8 +40,34 @@ $(document).ready(function() {
                     }
                 }
             ]
-        })
+        });
     });
+    // $('[data-confirm]').each(function() {
+    //     var me = $(this),
+    //         me_data = me.data('confirm');
+
+    //     me_data = me_data.split("|");
+    //     me.fireModal({
+    //         title: me_data[0],
+    //         body: me_data[1],
+    //         buttons: [{
+    //                 text: me.data('confirm-text-yes') || 'Yes',
+    //                 class: 'btn btn-danger btn-shadow',
+    //                 handler: function() {
+    //                     eval(me.data('confirm-yes'));
+    //                 }
+    //             },
+    //             {
+    //                 text: me.data('confirm-text-cancel') || 'Cancel',
+    //                 class: 'btn btn-secondary',
+    //                 handler: function(modal) {
+    //                     $.destroyModal(modal);
+    //                     eval(me.data('confirm-no'));
+    //                 }
+    //             }
+    //         ]
+    //     })
+    // });
 
 });
 

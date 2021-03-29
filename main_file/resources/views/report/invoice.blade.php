@@ -93,7 +93,15 @@
                                 {{ Form::label('client', __('Client')) }}
                                 {{ Form::select('client', $clients,isset($_GET['client'])?$_GET['client']:'', array('class' => 'form-control custom-select')) }}
                             </div>
-
+                            <div class="col-md-2">
+                                {{ Form::label('payment_method', __('Payment Method')) }}
+                                <select name="payment_method" class="form-control custom-select">
+                                    <option>Payment Method</option>
+                                    @foreach($paymentMethods as $paymentMethod)
+                                        <option value="{{ $paymentMethod['id'] }}">{{ $paymentMethod['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col-auto apply-btn">
                                 {{Form::submit(__('Apply'),array('class'=>'btn btn-outline-primary btn-sm'))}}
                                 <a href="{{route('report.invoice')}}" class="btn btn-outline-danger btn-sm">{{__('Reset')}}</a>

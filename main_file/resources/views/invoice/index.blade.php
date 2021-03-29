@@ -162,7 +162,7 @@
                                     <a href="{{route('invoice.show',\Crypt::encrypt($invoice->id))}}" class="table-action" data-toggle="tooltip" data-original-title="{{__('View')}}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    @if(\Auth::user()->type=='company')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit sales invoice'))
                                     <a href="#!" data-url="{{ route('invoice.edit',$invoice->id) }}" class="table-action" data-toggle="tooltip" data-original-title="{{__('Edit')}}" data-ajax-popup="true" data-title="{{__('Edit Invoice')}}">
                                         <i class="far fa-edit"></i>
                                     </a>

@@ -146,7 +146,7 @@
                         <div class="col">
                             <h3 class="mb-0">{{__('Invoice')}}</h3>
                         </div>
-                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit sales invoice'))
                         @if($invoice->status!=0 && $invoice->status!=5)
                         <div class="col-auto">
                             <a href="#" data-url="{{route('invoice.create.item',$invoice->id)}}" data-ajax-popup="true" data-title="{{__('Add Item')}}" class="btn btn-outline-primary btn-sm">
@@ -262,7 +262,7 @@
                             <div class="tx-gray-500 small">{{__('Due Date')}}</div>
                             <div class="font-weight-bold">{{\Auth::user()->dateFormat($invoice->due_date)}}</div>
                         </div>
-                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit product'))
+                        @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo('edit sales invoice'))
                         <div class="col-md-2">
                             <select class="form-control custom-select status_change font-style" name="status" data-url="{{route('invoice.status.change',$invoice->id)}}">
                                 @foreach($status as $k=>$val)

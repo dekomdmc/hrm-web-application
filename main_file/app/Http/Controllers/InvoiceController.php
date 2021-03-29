@@ -20,7 +20,6 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         if (\Auth::user()->type == 'company' || \Auth::user()->type == 'client' || \Auth::user()->hasPermissionTo('view sales')) {
-
             if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
                 $invoices = Invoice::where('created_by', \Auth::user()->creatorId());
             } else {
@@ -60,7 +59,6 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-
         if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $validator = \Validator::make(
                 $request->all(),
@@ -89,6 +87,7 @@ class InvoiceController extends Controller
             $invoice->description = $request->description;
             $invoice->created_by  = \Auth::user()->creatorId();
             $invoice->save();
+            $this->send(Invoice::latest()->first()->id);
 
             return redirect()->route('invoice.show', \Crypt::encrypt($invoice->id))->with('success', 'Invoice successfully created.');
         } else {
@@ -205,7 +204,7 @@ class InvoiceController extends Controller
         return response()->json($projects);
     }
 
-    function invoiceNumber()
+    public function invoiceNumber()
     {
         $latest = Invoice::where('created_by', '=', \Auth::user()->creatorId())->latest()->first();
         if (!$latest) {
@@ -217,7 +216,6 @@ class InvoiceController extends Controller
 
     public function createItem($invoice_id)
     {
-
         $items = Item::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
         $items->prepend('Select Item', '');
 
@@ -236,7 +234,6 @@ class InvoiceController extends Controller
 
     public function storeProduct(Request $request, $invoice_id)
     {
-
         $itemname = "";
         if ($request->custom_itemcheck == "on") {
             if (!empty($request->item_name)) {
@@ -395,7 +392,6 @@ class InvoiceController extends Controller
             return redirect()->back()->with('success', __("No Client has been seleted"));
         }
         // Send Email
-
     }
 
     public function createReceipt($invoice_id)
@@ -409,8 +405,6 @@ class InvoiceController extends Controller
     public function storeReceipt(Request $request, $invoice_id)
     {
         if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
-
-
             $invoice = Invoice::find($invoice_id);
             if ($invoice->type == 'Product') {
                 $inv_products = InvoiceProduct::query()->where("invoice", "=", $invoice->id)->get();
@@ -495,7 +489,6 @@ class InvoiceController extends Controller
 
     public function paymentDelete($id, $payment_id)
     {
-
         if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('view sales')) {
             $invoicePayment = InvoicePayment::find($payment_id);
             $invoicePayment->delete();

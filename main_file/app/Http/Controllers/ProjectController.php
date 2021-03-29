@@ -68,7 +68,7 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPersmissionTo("create project")) {
             $validator = \Validator::make(
                 $request->all(),
                 [

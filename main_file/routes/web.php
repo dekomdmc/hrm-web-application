@@ -289,7 +289,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::post('leadStage/order', 'LeadStageController@order')->name('leadStage.order');
         Route::resource('leadStage', 'LeadStageController');
     }
@@ -315,7 +314,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::resource('label', 'LabelController');
     }
 );
@@ -364,7 +362,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::post('deal/order', 'DealController@order')->name('deal.order');
         Route::get('deal/{id}/users', 'DealController@userEdit')->name('deal.users.edit');
         Route::put('deal/{id}/users', 'DealController@userUpdate')->name('deal.users.update');
@@ -437,7 +434,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::post('dealStage/order', 'DealStageController@order')->name('dealStage.order');
         Route::post('dealStage/json', 'DealStageController@json')->name('dealStage.json');
         Route::resource('dealStage', 'DealStageController');
@@ -476,7 +472,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::post('business-setting', 'SettingController@saveBusinessSettings')->name('business.setting');
         Route::post('company-setting', 'SettingController@saveCompanySettings')->name('company.setting');
         Route::post('email-setting', 'SettingController@saveEmailSettings')->name('email.setting');
@@ -500,7 +495,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::get('project/{project}/user', 'ProjectController@projectUser')->name('project.user');
         Route::post('project/{project}/user', 'ProjectController@addProjectUser')->name('project.user.add');
         Route::delete('project/{project}/user/{user}/destroy', 'ProjectController@destroyProjectUser')->name('project.user.destroy');
@@ -612,7 +606,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::get('creditNote/invoice', 'CreditNoteController@getinvoice')->name('invoice.get');
         Route::resource('creditNote', 'CreditNoteController');
     }
@@ -762,7 +755,6 @@ Route::group(
         ],
     ],
     function () {
-
         Route::get('order', 'StripePaymentController@index')->name('order.index');
         Route::get('/stripe/{code}', 'StripePaymentController@stripe')->name('stripe');
         Route::post('/stripe', 'StripePaymentController@stripePost')->name('stripe.post');
