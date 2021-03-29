@@ -350,6 +350,7 @@
                                     <span>
                                         <input checked="checked" type="checkbox" class="custom-item-select">
                                     </span>
+                                    <input style="display: none" type="text" name="item" class="form-control custom-item">
                                     <select data-url="{{route('estimate.product')}}" name="item" class="form-control custom-select item">
                                         <option value="0">Select Item</option>
                                         @foreach ($items as $item) {
@@ -357,7 +358,6 @@
                                         @endforeach
                                     </select>
                                     <!-- {{ Form::select('item', $items,null, array('class' => 'form-control custom-select item','data-url'=>route('estimate.product'))) }} -->
-                                    <input style="display: none" type="text" name="item" class="form-control custom-item">
                                     <!-- <script>
                                         document.querySelector(".form-control.custom-select.item").addEventListener("change", function() {
                                             alert("");
@@ -458,7 +458,7 @@
     <div class="row">
         <div class="col-md-12 text-right">
             <a href="{{route('estimate.index')}}" class="btn btn-secondary">{{__('Cancel')}}</a>
-            <button type="submit" class="btn btn-primary">{{__('Create')}}</button>
+            <button data-submit type="submit" class="btn btn-primary">{{__('Create')}}</button>
         </div>
     </div>
     {{ Form::close() }}
@@ -466,7 +466,7 @@
 @endsection
 <script>
     window.onload = function() {
-        $("form").submit(function(e) {
+        $("[data-submit]").on('click',function(e) {
             let data = $("#estimate-form").serializeArray();
             data = data.filter(function(e) {
                 if (e.value !== "" || e.value != 0) {

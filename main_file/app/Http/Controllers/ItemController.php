@@ -63,7 +63,7 @@ class ItemController extends Controller
 
     public function pricesStore(Request $request)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit product')) {
             $rules = [
                 'name' => 'required',
                 'sku' => 'required',
@@ -295,7 +295,7 @@ class ItemController extends Controller
 
     public function destroy(Item $item)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit product')) {
             if ($item->is_mode != null) {
                 $item->delete();
                 return redirect()->route('item.index')->with('success', __('Item successfully deleted.'));
@@ -310,7 +310,7 @@ class ItemController extends Controller
 
     public function destroyItem(\App\StockItem $item)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo('edit product')) {
             return redirect()->route('item.prices')->with('success', __('Item successfully deleted.'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));

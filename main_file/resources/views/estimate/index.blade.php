@@ -111,19 +111,19 @@
                                     @endif
                                 </td>
                                 <td class="table-actions text-right">
-                                    @if(\Auth::user()->type=='company')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo("edit estimate"))
                                     @if($estimate->is_convert==0)
                                     <a href="{{ route('estimate.convert',$estimate->id) }}" class="table-action" data-toggle="tooltip" data-original-title="Convert to Invoice">
                                         <i class="fas fa-exchange-alt"></i>
                                     </a>
                                     @endif
                                     @endif
-                                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->type=='client' || \Auth::user()->hasPermissionTo("edit estimate"))
                                     <a href="{{ route('estimate.show',$estimate->id) }}" class="table-action" data-toggle="tooltip" data-original-title="View">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     @endif
-                                    @if(\Auth::user()->type=='company')
+                                    @if(\Auth::user()->type=='company' || \Auth::user()->hasPermissionTo("edit estimate"))
                                     <a href="{{ route('estimate.edit',$estimate->id) }}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
                                         <i class="far fa-edit"></i>
                                     </a>

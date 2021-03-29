@@ -68,10 +68,9 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        if (\Auth::user()->type == 'company' || \Auth::user()->hasPersmissionTo("create project")) {
-            $validator = \Validator::make(
-                $request->all(),
-                [
+        $validator = \Validator::make(
+            $request->all(),
+            [
                     'title' => 'required',
                     'category' => 'required',
                     'price' => 'required',
@@ -80,45 +79,45 @@ class ProjectController extends Controller
                     'employee' => 'required',
                     'status' => 'required',
                 ]
-            );
-            if ($validator->fails()) {
-                $messages = $validator->getMessageBag();
+        );
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
 
-                return redirect()->route('project.index')->with('error', $messages->first());
-            }
+            return redirect()->route('project.index')->with('error', $messages->first());
+        }
 
-            $projectStages = ProjectStage::where('created_by', \Auth::user()->creatorId())->first();
-            if (empty($projectStages)) {
-                return redirect()->route('project.index')->with('error', 'Please add constant project stage.');
-            }
-            $project              = new Project();
-            $project->title       = $request->title;
-            $project->category    = $request->category;
-            $project->price       = $request->price;
-            $project->start_date  = $request->start_date;
-            $project->due_date    = $request->due_date;
-            $project->lead        = $request->lead;
-            $project->client      = $request->client;
-            $project->status      = $request->status;
-            $project->description = $request->description;
-            $project->created_by  = \Auth::user()->creatorId();
-            $project->save();
+        $projectStages = ProjectStage::where('created_by', \Auth::user()->creatorId())->first();
+        if (empty($projectStages)) {
+            return redirect()->route('project.index')->with('error', 'Please add constant project stage.');
+        }
+        $project              = new Project();
+        $project->title       = $request->title;
+        $project->category    = $request->category;
+        $project->price       = $request->price;
+        $project->start_date  = $request->start_date;
+        $project->due_date    = $request->due_date;
+        $project->lead        = $request->lead;
+        $project->client      = $request->client;
+        $project->status      = $request->status;
+        $project->description = $request->description;
+        $project->created_by  = \Auth::user()->creatorId();
+        $project->save();
 
+        $projectUser             = new ProjectUser();
+        $projectUser->user_id    = \Auth::user()->creatorId();
+        $projectUser->project_id = $project->id;
+        $projectUser->save();
+
+        foreach ($request->employee as $key => $user) {
             $projectUser             = new ProjectUser();
-            $projectUser->user_id    = \Auth::user()->creatorId();
+            $projectUser->user_id    = $user;
             $projectUser->project_id = $project->id;
             $projectUser->save();
+        }
 
-            foreach ($request->employee as $key => $user) {
-                $projectUser             = new ProjectUser();
-                $projectUser->user_id    = $user;
-                $projectUser->project_id = $project->id;
-                $projectUser->save();
-            }
-
-            $client     = User::find($request->client);
-            $user       = \Auth::user();
-            $projectArr = [
+        $client     = User::find($request->client);
+        $user       = \Auth::user();
+        $projectArr = [
                 'project_title' => $project->title,
                 'project_category' => !empty(Category::find($project->category)) ? Category::find($project->category)->name : '',
                 'project_price' => $user->priceFormat($project->price),
@@ -128,12 +127,12 @@ class ProjectController extends Controller
                 'project_lead' => !empty(Lead::find(!empty($request->lead) ? $request->lead : 0)) ? Lead::find(!empty($request->lead) ? Lead::find(!empty($request->lead))->subject : 0) : '',
             ];
 
-            // Send Email
-            $resp = Utility::sendEmailTemplate('create_project', [$client->id => $client->email], $projectArr);
+        // Send Email
+        $resp = Utility::sendEmailTemplate('create_project', [$client->id => $client->email], $projectArr);
 
-            foreach ($request->employee as $key => $emp) {
-                $employee         = User::find($emp);
-                $projectAssignArr = [
+        foreach ($request->employee as $key => $emp) {
+            $employee         = User::find($emp);
+            $projectAssignArr = [
                     'project_title' => $project->title,
                     'project_category' => !empty(Category::find($project->category)) ? Category::find($project->category)->name : '',
                     'project_price' => $user->priceFormat($project->price),
@@ -143,16 +142,13 @@ class ProjectController extends Controller
                     'project_due_date' => $user->dateFormat($project->due_date),
                     'project_lead' => !empty(Lead::find(!empty($request->lead) ? $request->lead : 0)) ? Lead::find(!empty($request->lead) ? Lead::find(!empty($request->lead))->subject : 0) : '',
                 ];
-                if (!empty($employee->email)) {
-                    $resp = Utility::sendEmailTemplate('project_assign', [$employee->id => $employee->email], $projectAssignArr);
-                }
+            if (!empty($employee->email)) {
+                $resp = Utility::sendEmailTemplate('project_assign', [$employee->id => $employee->email], $projectAssignArr);
             }
-
-
-            return redirect()->route('project.index')->with('success', __('Project successfully created.') . (($resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
         }
+
+
+        return redirect()->route('project.index')->with('success', __('Project successfully created.') . (($resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
     }
 
 
@@ -208,7 +204,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo("edit project")) {
             $validator = \Validator::make(
                 $request->all(),
                 [
@@ -248,7 +244,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        if (\Auth::user()->type == 'company') {
+        if (\Auth::user()->type == 'company' || \Auth::user()->hasPermissionTo("edit project")) {
             $project->delete();
 
             return redirect()->route('project.index')->with('success', __('Project successfully deleted.'));
