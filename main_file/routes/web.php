@@ -1176,6 +1176,7 @@ Route::group(
         Route::get('lead-report', 'ReportController@lead')->name('report.lead');
         Route::get('client-report', 'ReportController@client')->name('report.client');
         Route::get('attendance-report', 'ReportController@attendance')->name('report.attendance');
+        Route::get('payment-report', 'ReportController@payment')->name('report.payment');
     }
 );
 

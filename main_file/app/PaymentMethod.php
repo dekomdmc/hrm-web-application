@@ -13,7 +13,6 @@ class PaymentMethod extends Model
 
     public function getTotalCashReceived($id)
     {
-        
         $payments = \App\InvoicePayment::where('payment_method', $id)->get();
         $purchasePayments = \App\PurchaseInvoicePayment::where('payment_method', $id)->get();
         $paymentDefaultCashs = \App\Payment::where('payment_method', $id)->get();
@@ -32,5 +31,13 @@ class PaymentMethod extends Model
         }
 
         return $total;
+    }
+
+    public static function getNameById($id)
+    {
+        $pm = PaymentMethod::find($id);
+        if ($pm != null) {
+            return $pm->name;
+        }
     }
 }

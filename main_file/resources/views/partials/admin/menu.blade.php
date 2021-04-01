@@ -416,6 +416,9 @@ $company_small_logo=Utility::getValByName('company_small_logo');
  Request::segment(1) == 'estimate-report' || Request::segment(1) == 'invoice-report' || Request::segment(1) == 'lead-report' || Request::segment(1) == 'client-report' || Request::segment(1) == 'attendance-report')?'show':''}}" id="report">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item {{ (Request::segment(1) == 'attendance-report')?'active open':''}}">
+                                    <a href="{{route('report.payment')}}" class="nav-link">{{__('Payment Receipt')}}</a>
+                                </li>
+                                <li class="nav-item {{ (Request::segment(1) == 'attendance-report')?'active open':''}}">
                                     <a href="{{route('report.attendance')}}" class="nav-link">{{__('Attendance')}}</a>
                                 </li>
                                 <li class="nav-item {{ (Request::segment(1) == 'task-report')?'active open':''}}">

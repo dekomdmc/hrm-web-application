@@ -128,7 +128,9 @@ class ProjectController extends Controller
             ];
 
         // Send Email
-        $resp = Utility::sendEmailTemplate('create_project', [$client->id => $client->email], $projectArr);
+        if ($client != null && !empty($client->email)) {
+            $resp = Utility::sendEmailTemplate('create_project', [$client->id => $client->email], $projectArr);
+        }
 
         foreach ($request->employee as $key => $emp) {
             $employee         = User::find($emp);

@@ -41,6 +41,7 @@ $(document).ready(function() {
                 }
             ]
         });
+        // $(this).trigger("click");
     });
     // $('[data-confirm]').each(function() {
     //     var me = $(this),

@@ -316,9 +316,16 @@ class ReportController extends Controller
                 $start = strtotime(date('Y-01-01'));
                 $end   = strtotime(date('Y-12-31'));
             }
-
-
-            $invoicesFilter = Invoice::selectRaw('invoices.*,MONTH(send_date) as month,YEAR(send_date) as year')->where('created_by', \Auth::user()->creatorId())->get();//->where('send_date', '>=', date('Y-m-01', $start))->where('send_date', '<=', date('Y-m-t', $end))->get();
+            
+            // print($start . " " . $end);
+            // exit();
+            
+            
+            $invoicesFilter = Invoice::selectRaw('invoices.*,MONTH(send_date) as month,YEAR(send_date) as year')->where('created_by', \Auth::user()->creatorId());
+            if (!empty($request->start_month) && !empty($request->end_month)) {
+                $invoicesFilter->where('send_date', '>=', date('Y-m-d', $start))->where('send_date', '<=', date('Y-m-t', $end));
+            }
+            $invoicesFilter = $invoicesFilter->get();
 
             $invoicesTotal     = 0;
             $invoiceTotalArray = [];
@@ -347,7 +354,7 @@ class ReportController extends Controller
 
             $currentdate = $start;
             while ($currentdate <= $end) {
-                $labels[]    = date('M Y', $currentdate);
+                $labels[]    = date('d M Y', $currentdate);
                 $currentdate = strtotime('+1 month', $currentdate);
             }
 
@@ -367,8 +374,8 @@ class ReportController extends Controller
             $data[] = $incomeArr;
             $data[] = $expenseArr;
 
-            $filter['startDateRange'] = date('M-Y', $start);
-            $filter['endDateRange']   = date('M-Y', $end);
+            $filter['startDateRange'] = date('d-M-Y', $start);
+            $filter['endDateRange']   = date('d-M-Y', $end);
 
             return view('report.income_expense', compact('invoices', 'labels', 'data', 'incomeCount', 'expenseCount', 'filter'));
         } else {
@@ -567,18 +574,16 @@ class ReportController extends Controller
                 $filter['status'] = Invoice::$statues[$request->status];
             }
             
-            // if (!empty($request->start_month) && !empty($request->end_month)) {
-            //     $start = strtotime($request->start_month);
-            //     $end   = strtotime($request->end_month);
-            // } else {
-            //     $start = strtotime(date('Y-01'));
-            //     $end   = strtotime(date('Y-12'));
-            // }
-                    
-                    
-            $start = date('Y-m-d', strtotime($request->start_month));
-            $end = date('Y-m-d', strtotime($request->end_month));
-                    
+            if (!empty($request->start_month) && !empty($request->end_month)) {
+                $start = date('Y-m-d', strtotime($request->start_month));
+                $end   = date('Y-m-d', strtotime($request->end_month));
+            // $start = date('Y-m-d', $request->start_month);
+                // $end = date('Y-m-d', $request->end_month);
+            } else {
+                $start = date('Y-1-31');
+                $end   = date('Y-12-31');
+            }
+
             // print($request->start_month . " " . $request->end_month . "<br>");
             // print($start . " " . $end);
             // exit();
@@ -607,8 +612,8 @@ class ReportController extends Controller
                 $totalTax      += $invoice->getTotalTax();
                 $totalDiscount += $invoice->getTotalDiscount();
             }
-            $filter['startDateRange'] = date('Y-m-d', strtotime($start));
-            $filter['endDateRange']   = date('Y-m-d', strtotime($end));
+            $filter['startDateRange'] = $start;
+            $filter['endDateRange']   = $end;
 
             $paymentMethods = \App\PaymentMethod::query()->where("created_by", \Auth::user()->creatorId())->get()->toArray();
 
@@ -732,6 +737,26 @@ class ReportController extends Controller
             return view('report.lead', compact('labels', 'data', 'filter', 'leads'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+
+    public function payment(Request $request)
+    {
+        if (\Auth::user()->type == 'company') {
+            $paymentMethods = \App\PaymentMethod::query()->where("created_by", \Auth::user()->creatorId())->get()->toArray();
+            $paymentReceipts = \App\InvoicePayment::query();
+            if (!empty($request->start_month) && !empty($request->end_month)) {
+                $start = $request->start_month;
+                $end = $request->end_month;
+            } else {
+                $start = date('Y-1-31');
+                $end = date('Y-12-31');
+            }
+            // print($start . " " . $end);
+            // exit;
+            $paymentReceipts->where("date", ">=", $start)->where("date", "<=", $end);
+            $paymentReceipts = $paymentReceipts->get();
+            return view('report.payment', compact("paymentMethods", "paymentReceipts"));
         }
     }
 

@@ -96,7 +96,7 @@
                             <div class="col-md-2">
                                 {{ Form::label('payment_method', __('Payment Method')) }}
                                 <select name="payment_method" class="form-control custom-select">
-                                    <option>Payment Method</option>
+                                    <option value="">Payment Method</option>
                                     @foreach($paymentMethods as $paymentMethod)
                                         <option value="{{ $paymentMethod['id'] }}">{{ $paymentMethod['name'] }}</option>
                                     @endforeach
@@ -226,6 +226,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>{{__('Client')}}</th>
+                                <th>{{__('Payment Menthod')}}</th>
                                 <th>{{__('Issue Date')}}</th>
                                 <th>{{__('Send Date')}}</th>
                                 <th>{{__('Expiry Date')}}</th>
@@ -241,6 +242,7 @@
                                 <tr>
                                     <td><a class="btn btn-outline-primary btn-sm" href="{{route('invoice.show',\Crypt::encrypt($invoice->id))}}">{{\Auth::user()->invoiceNumberFormat($invoice->invoice_id)}}</a></td>
                                     <td>{{!empty($invoice->clients)?$invoice->clients->name:''}}</td>
+                                    <td></td>
                                     <td>{{\Auth::user()->dateFormat($invoice->issue_date)}}</td>
                                     <td>{{\Auth::user()->dateFormat($invoice->send_date)}}</td>
                                     <td>{{\Auth::user()->dateFormat($invoice->due_date)}}</td>
