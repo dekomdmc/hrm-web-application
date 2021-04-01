@@ -106,6 +106,9 @@ class EstimateController extends Controller
 
             $products = $request->items;
 
+            // print_r($products);
+            // exit;
+
             for ($i = 0; $i < count($products); $i++) {
                 $estimateProduct              = new EstimateProduct();
                 $estimateProduct->estimate    = $estimate->id;
@@ -123,7 +126,7 @@ class EstimateController extends Controller
                 $estimateProduct->save();
             }
 
-            return redirect()->route('estimate.index', $estimate->id)->with('success', __('Estimate successfully created.'));
+            return redirect()->route('estimate.index')->with('success', __('Estimate successfully created.'));
         }
     }
 

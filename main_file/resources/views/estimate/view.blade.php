@@ -205,7 +205,7 @@
                             @endphp
 
                             <tr>
-                                <td>{{ !empty($item->items)?$item->items->name:$item->item }} </td>
+                                <td>{{ !empty($item->items) ? $item->items->name : $item->item }} </td>
                                 <td>{{ $item->quantity }} </td>
                                 <td>{{ \Auth::user()->priceFormat($item->price) }} </td>
                                 <td>

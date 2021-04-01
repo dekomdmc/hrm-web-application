@@ -752,11 +752,22 @@ class ReportController extends Controller
                 $start = date('Y-1-31');
                 $end = date('Y-12-31');
             }
-            // print($start . " " . $end);
-            // exit;
+            
             $paymentReceipts->where("date", ">=", $start)->where("date", "<=", $end);
+
+            if(!empty($request->payment_method)){
+                $paymentReceipts->where("payment_method",$request->payment_method);
+            }
+
             $paymentReceipts = $paymentReceipts->get();
-            return view('report.payment', compact("paymentMethods", "paymentReceipts"));
+
+            $total = 0;
+
+            foreach($paymentReceipts as $paymentReceipt){
+                $total += $paymentReceipt->amount;
+            }
+
+            return view('report.payment', compact("paymentMethods", "total","paymentReceipts"));
         }
     }
 

@@ -469,8 +469,8 @@
         $("[data-submit]").on('click',function(e) {
             let data = $("#estimate-form").serializeArray();
             data = data.filter(function(e) {
-                if (e.value !== "" || e.value != 0) {
-                    return e;
+                if (e.value != "0" || e.name != "items[0][item]") {
+                    return true;
                 }
             });
             let fdt = new FormData();
