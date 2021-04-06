@@ -483,7 +483,7 @@
                     body: fdt
                 });
                 console.log(await response.text());
-                window.location.reload();
+                window.location.href = "/estimate";
             })();
             e.preventDefault();
         });
