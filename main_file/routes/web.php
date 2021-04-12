@@ -1144,6 +1144,7 @@ Route::group(
         Route::post('purchaseinvoice/{id}/receipt/store', 'PurchaseInvoice@storeReceipt')->name('purchaseinvoice.store.receipt');
 
         Route::get('purchaseinvoice/item', 'PurchaseInvoice@items')->name('purchaseinvoice.items');
+        Route::get('purchaseinvoice/editInvoiceProduct', 'PurchaseInvoice@editInvoiceProduct')->name('purchaseinvoice.exitpurchaseinvoiceitem');
         Route::delete('purchaseinvoice/{id}/item/{pid}', 'PurchaseInvoice@itemDelete')->name('purchaseinvoice.item.delete');
         Route::get('purchaseinvoice/pdf/{id}', 'PurchaseInvoice@pdf')->name('purchaseinvoice.pdf')->middleware(['XSS']);
         Route::resource('purchaseinvoice', 'PurchaseInvoice');

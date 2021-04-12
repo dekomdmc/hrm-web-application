@@ -312,6 +312,7 @@
                                 <td class="text-right">{{$item->description}} </td>
                                 <td class="text-right"> {{\Auth::user()->priceFormat(($item->price * $item->quantity))}}</td>
                                 <td>
+                                    <i class="fas fa-edit"></i>
                                     @if(\Auth::user()->type=='company')
                                     <a href="#" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="{{__('Delete')}}" data-confirm="Are You Sure?|This action can not be undone. Do you want to continue?" data-confirm-yes="document.getElementById('item-delete-form-{{$item->id}}').submit();">
                                         <i class="fas fa-trash"></i>

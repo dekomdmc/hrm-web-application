@@ -308,6 +308,11 @@ class PurchaseInvoice extends Controller
         }
     }
 
+    public function editInvoiceProduct(\App\PurchaseInvoice $pi, \App\PurchaseInvoiceProduct $pip)
+    {
+        return view('purchaseinvoice.editInvoiceItem');
+    }
+
     public function send($id)
     {
         $invoice = \App\PurchaseInvoice::find($id);

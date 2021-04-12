@@ -327,6 +327,9 @@
                                 <td class="text-right"> {{\Auth::user()->priceFormat(($item->price * $item->quantity))}}</td>
                                 <td>
                                     @if(\Auth::user()->type=='company')
+                                    <a href="#" class="table-action" data-url="{{ route('purchaseinvoice.exitpurchaseinvoiceitem') }}" data-toggle="tooltip" data-original-title="Edit" data-ajax-popup="true" data-title="Edit Purchase Invoice Item">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     <a href="#" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="{{__('Delete')}}" data-confirm="Are You Sure?|This action can not be undone. Do you want to continue?" data-confirm-yes="document.getElementById('item-delete-form-{{$item->id}}').submit();">
                                         <i class="fas fa-trash"></i>
                                     </a>
@@ -334,7 +337,6 @@
                                     {!! Form::close() !!}
                                     @endif
                                 </td>
-
                             </tr>
                             @endforeach
                         <tfoot>
